@@ -185,11 +185,10 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
               onClick={isPreview ? undefined : handleShare}
               disabled={isPreview}
               title={isPreview ? "Sharing is disabled in preview mode" : "Copy Link to Case Study"}
-              className={`p-2 rounded-md transition-colors text-xs font-display flex items-center gap-1.5 font-medium ${
-                isPreview
+              className={`p-2 rounded-md transition-colors text-xs font-display flex items-center gap-1.5 font-medium ${isPreview
                   ? 'text-[#6F6965]/40 cursor-not-allowed bg-transparent'
                   : 'text-[#6F6965] hover:text-[#171514] hover:bg-[#F7F4F0] cursor-pointer'
-              }`}
+                }`}
             >
               {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">{copiedLink ? 'Copied' : 'Share'}</span>
@@ -231,7 +230,7 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
         {/* Category & Year */}
         <div className="flex items-center gap-3 mb-6 font-display text-xs text-[#6F6965]">
           <span className="px-2.5 py-1 bg-[#F7F4F0] border border-[#E8E3DD] text-[#9B0F06] font-bold rounded uppercase">
-            {project.project_type || project.category}
+            {project.category}
           </span>
           <span>·</span>
           <span className="font-semibold">{project.year}</span>
@@ -408,11 +407,10 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
             <div
               onClick={isPreview ? undefined : () => onSelectProject(prevProject.slug)}
               title={isPreview ? "Switching case studies is disabled in preview mode" : undefined}
-              className={`p-6 bg-[#F7F4F0] border border-[#E8E3DD] rounded-xl transition-all ${
-                isPreview
+              className={`p-6 bg-[#F7F4F0] border border-[#E8E3DD] rounded-xl transition-all ${isPreview
                   ? 'opacity-60 cursor-not-allowed select-none'
                   : 'group cursor-pointer hover:bg-[#FAF8F5] hover:border-[#9B0F06]'
-              }`}
+                }`}
             >
               <div className="font-display text-xs uppercase tracking-wider font-semibold text-[#6F6965] mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-1">
@@ -442,11 +440,10 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
             <div
               onClick={isPreview ? undefined : () => onSelectProject(nextProject.slug)}
               title={isPreview ? "Switching case studies is disabled in preview mode" : undefined}
-              className={`p-6 bg-[#F7F4F0] border border-[#E8E3DD] rounded-xl text-left md:text-right transition-all ${
-                isPreview
+              className={`p-6 bg-[#F7F4F0] border border-[#E8E3DD] rounded-xl text-left md:text-right transition-all ${isPreview
                   ? 'opacity-60 cursor-not-allowed select-none'
                   : 'group cursor-pointer hover:bg-[#FAF8F5] hover:border-[#9B0F06]'
-              }`}
+                }`}
             >
               <div className="font-display text-xs uppercase tracking-wider font-semibold text-[#6F6965] mb-2 flex items-center justify-between md:justify-end gap-2">
                 {isPreview && (
@@ -629,8 +626,8 @@ const RenderContentBlock: React.FC<{ block: ContentBlock }> = ({ block }) => {
         block.calloutType === 'decision'
           ? 'bg-[#171514] text-white border-[#171514]'
           : block.calloutType === 'outcome'
-          ? 'bg-[#FDF2F1] text-[#171514] border-[#9B0F06]/30'
-          : 'bg-[#F7F4F0] text-[#171514] border-[#E8E3DD]';
+            ? 'bg-[#FDF2F1] text-[#171514] border-[#9B0F06]/30'
+            : 'bg-[#F7F4F0] text-[#171514] border-[#E8E3DD]';
 
       const tagColor =
         block.calloutType === 'decision'

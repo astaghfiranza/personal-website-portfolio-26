@@ -42,8 +42,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header
       id="main-navbar"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#E8E3DD] py-3 shadow-[0_4px_20px_-10px_rgba(36,32,30,0.05)]'
-          : 'bg-transparent py-5'
+        ? 'bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#E8E3DD] py-3 shadow-[0_4px_20px_-10px_rgba(36,32,30,0.05)]'
+        : 'bg-transparent py-5'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="group flex items-center gap-1 text-left focus:outline-none"
           >
             <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#171514] group-hover:text-[#9B0F06] transition-colors">
-              ATHTHAR
+              astaghfiranza
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#9B0F06] animate-pulse"></span>
 

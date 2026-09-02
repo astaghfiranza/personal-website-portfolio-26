@@ -40,7 +40,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, onScrollToTop, onOpenA
           {/* Brand Col */}
           <div className="md:col-span-5 space-y-3">
             <div className="flex items-center gap-1.5 font-display text-2xl font-bold tracking-tight text-[#171514]">
-              <span>ATHTHAR</span>
+              <span>astaghfiranza</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#9B0F06]"></span>
             </div>
             <p className="text-sm text-[#6F6965] max-w-sm font-light leading-relaxed">
@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, onScrollToTop, onOpenA
             </p>
             <div className="pt-2 flex items-center gap-2 font-display text-xs text-[#6F6965]">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Jakarta, ID ({currentTime} GMT+7)</span>
+              <span>Jakarta, ID</span>
             </div>
           </div>
 
@@ -112,10 +112,10 @@ export const Footer: React.FC<FooterProps> = ({ settings, onScrollToTop, onOpenA
 
           {/* Philosophy & Back to Top */}
           <div className="md:col-span-3 flex flex-col justify-between items-start md:items-end">
-            <div className="text-left md:text-right font-display text-xs text-[#6F6965] space-y-1">
+            {/* <div className="text-left md:text-right font-display text-xs text-[#6F6965] space-y-1">
               <div className="text-[#171514] font-semibold">Concept: Warm Precision</div>
               <div>"Quiet on the surface. Curious underneath."</div>
-            </div>
+            </div> */}
 
             <button
               onClick={onScrollToTop}
