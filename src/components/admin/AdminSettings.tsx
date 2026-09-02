@@ -339,7 +339,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
                   Zoom: {settings.hero_image_crop_zoom || 100}% · Pos: {settings.hero_image_crop_x ?? 50}%/{settings.hero_image_crop_y ?? 50}%
                 </span>
               </div>
-              
+
               {/* Photo Frame matching public Hero without shadows */}
               <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden border border-[#E8E3DD] bg-[#FAF8F5]">
                 <img
@@ -705,9 +705,6 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
                 <span className="font-display text-[11px] uppercase tracking-wider font-semibold text-[#6F6965] block">
                   Case Study CTA ('Discuss in email') Directives
                 </span>
-                <span className="text-[10px] font-mono text-[#9B0F06]">
-                  Supports {'{{project_title}}'} placeholder
-                </span>
               </div>
 
               <div>
@@ -843,11 +840,10 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
 
         {passwordMsg && (
           <div
-            className={`p-3 rounded text-xs font-mono ${
-              passwordMsg.type === 'error'
+            className={`p-3 rounded text-xs font-mono ${passwordMsg.type === 'error'
                 ? 'bg-red-50 text-red-700 border border-red-200'
                 : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-            }`}
+              }`}
           >
             {passwordMsg.text}
           </div>

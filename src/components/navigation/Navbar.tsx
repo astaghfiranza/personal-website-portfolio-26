@@ -41,11 +41,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       id="main-navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? 'bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#E8E3DD] py-3 shadow-[0_4px_20px_-10px_rgba(36,32,30,0.05)]'
           : 'bg-transparent py-5'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -59,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               ATHTHAR
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#9B0F06] animate-pulse"></span>
-            
+
           </button>
 
           {/* Desktop Navigation */}
@@ -90,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('contact')}
               className="text-xs uppercase tracking-widest text-[#6F6965] hover:text-[#171514] hover:font-semibold transition-colors font-display font-medium"
             >
-              
+
               Contact
             </button>
           </nav>
@@ -108,14 +107,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </a>
 
             {/* Admin CMS Access */}
-            <button
+            {/* <button
               id="nav-admin-link"
               onClick={onOpenAdmin}
               title="Admin CMS Portal"
               className="p-2 text-[#6F6965] hover:text-[#171514] hover:bg-[#F7F4F0] rounded-md transition-colors"
             >
               <Lock className="w-3.5 h-3.5" />
-            </button>
+            </button> */}
           </div>
 
           {/* Mobile Menu Button */}
