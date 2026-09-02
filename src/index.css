@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-display: 'Space Grotesk', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-space: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  --color-accent: #9B0F06;
+  --color-accent-hover: #7E0C05;
+  --color-accent-subtle: #FDF2F1;
+  --color-ink: #171514;
+  --color-warm-black: #24201E;
+  --color-warm-gray: #6F6965;
+  --color-warm-border: #E8E3DD;
+  --color-paper: #F7F4F0;
+  --color-paper-dark: #EFEBE4;
+  --color-warm-white: #FBF9F6;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-warm-white);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+}
+
+/* Custom editorial micro-styles */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F4F0;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D2C9;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9B0F06;
+}
