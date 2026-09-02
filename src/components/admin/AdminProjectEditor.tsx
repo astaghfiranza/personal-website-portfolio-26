@@ -69,7 +69,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
   const [duration, setDuration] = useState(project?.duration || '3 months');
   const [thumbnailUrl, setThumbnailUrl] = useState(
     project?.thumbnail_url ||
-      'https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=1400&q=80'
+    'https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=1400&q=80'
   );
   const [featured, setFeatured] = useState(project?.featured || false);
   const [featuredOrder, setFeaturedOrder] = useState(project?.featured_order || 1);
@@ -623,12 +623,12 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       {/* Top Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E3DD]">
         <div className="flex items-center gap-3">
-          <button
+          {/* <button
             onClick={onCancel}
             className="p-2 text-[#6F6965] hover:text-[#171514] hover:bg-white rounded-lg transition-colors border border-[#E8E3DD]"
           >
             <ArrowLeft className="w-4 h-4" />
-          </button>
+          </button> */}
           <div>
             <h1 className="text-xl sm:text-2xl font-bold font-display text-[#171514]">
               {isEditing ? `Edit: ${project?.title}` : 'Create New Case Study'}
@@ -641,7 +641,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
 
         <div className="flex items-center flex-wrap gap-2.5">
           {/* Data Portability: Export JSON */}
-          <button
+          {/* <button
             type="button"
             onClick={handleExportJson}
             title="Export raw project data as JSON"
@@ -649,10 +649,10 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
           >
             <FileJson className="w-3.5 h-3.5 text-[#6F6965]" />
             <span>Export JSON</span>
-          </button>
+          </button> */}
 
           {/* Data Portability: Export PDF */}
-          <button
+          {/* <button
             type="button"
             onClick={handleExportPdf}
             disabled={exportingPdf}
@@ -670,10 +670,10 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                 <span>Export PDF</span>
               </>
             )}
-          </button>
+          </button> */}
 
           {/* Data Portability: Import JSON */}
-          <button
+          {/* <button
             type="button"
             onClick={() => setIsImportModalOpen(true)}
             title="Import or replace with structured JSON case study"
@@ -683,7 +683,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
             <span>Import JSON</span>
           </button>
 
-          <div className="h-5 w-[1px] bg-[#E8E3DD] mx-0.5 hidden sm:block" />
+          <div className="h-5 w-[1px] bg-[#E8E3DD] mx-0.5 hidden sm:block" /> */}
 
           {/* Preview Button */}
           <button
@@ -1831,8 +1831,8 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
           mediaPickerTarget.type === 'thumbnail'
             ? 'Select Case Study Thumbnail'
             : mediaPickerTarget.type === 'ogImage'
-            ? 'Select Social Share Image (OG)'
-            : 'Select Content Block Image'
+              ? 'Select Social Share Image (OG)'
+              : 'Select Content Block Image'
         }
       />
 
@@ -1840,7 +1840,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       <CaseStudyImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        onImportSuccess={() => {}}
+        onImportSuccess={() => { }}
         onLoadIntoEditor={handleLoadImportedProject}
       />
 
