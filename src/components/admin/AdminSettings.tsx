@@ -2,37 +2,24 @@ import React, { useState, useEffect } from 'react';
 import {
   Save,
   Lock,
-  RefreshCw,
   AlertCircle,
   Check,
   KeyRound,
   Image as ImageIcon,
   Upload,
   RotateCcw,
-  Sparkles,
   FolderOpen,
-  Eye,
   Mail,
   MessageSquare,
   Send,
-  Download,
-  FileJson,
-  Copy,
-  Database,
-  ExternalLink,
-  X,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import {
   fetchSiteSettings,
   updateSiteSettings,
   changePassword,
-  resetDatabaseToDefault,
   uploadMedia,
-  exportFullDatabaseJson,
-  restoreFullDatabaseJson,
 } from '../../lib/api';
-import { downloadJsonFile } from '../../lib/caseStudyData';
 import { MediaPickerModal } from './MediaPickerModal';
 
 const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80';
@@ -50,13 +37,6 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
 
-  // Database Backup & Restore State
-  const [downloadingDb, setDownloadingDb] = useState(false);
-  const [restoringDb, setRestoringDb] = useState(false);
-  const [dbBackupSuccess, setDbBackupSuccess] = useState<string | null>(null);
-  const [jsonViewerModalOpen, setJsonViewerModalOpen] = useState(false);
-  const [rawDbJson, setRawDbJson] = useState<string>('');
-  const [copiedJson, setCopiedJson] = useState(false);
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -178,102 +158,6 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
     }
   };
 
-  const handleDownloadDbJson = async () => {
-    setDownloadingDb(true);
-    setDbBackupSuccess(null);
-    try {
-      const data = await exportFullDatabaseJson();
-      const stringified = JSON.stringify(data, null, 2);
-      setRawDbJson(stringified);
-
-      // Trigger download
-      const success = downloadJsonFile('db.json', data);
-      if (success) {
-        setDbBackupSuccess('Database "db.json" downloaded successfully.');
-      } else {
-        setDbBackupSuccess('Download triggered. You can also view or copy the raw JSON below.');
-      }
-    } catch (err: any) {
-      console.error('Failed to export db.json:', err);
-      alert('Failed to download db.json: ' + (err.message || 'Unknown error'));
-    } finally {
-      setDownloadingDb(false);
-    }
-  };
-
-  const handleOpenJsonViewer = async () => {
-    if (!rawDbJson) {
-      try {
-        setDownloadingDb(true);
-        const data = await exportFullDatabaseJson();
-        setRawDbJson(JSON.stringify(data, null, 2));
-      } catch (err: any) {
-        alert('Failed to fetch database JSON: ' + (err.message || 'Unknown error'));
-        return;
-      } finally {
-        setDownloadingDb(false);
-      }
-    }
-    setCopiedJson(false);
-    setJsonViewerModalOpen(true);
-  };
-
-  const handleCopyDbJson = async () => {
-    try {
-      await navigator.clipboard.writeText(rawDbJson);
-      setCopiedJson(true);
-      setTimeout(() => setCopiedJson(false), 2500);
-    } catch {
-      // Fallback selection
-      setCopiedJson(true);
-    }
-  };
-
-  const handleRestoreDbFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const text = event.target?.result as string;
-        const parsed = JSON.parse(text);
-
-        if (!confirm(`Restore database from file "${file.name}"? This will update projects, settings, and media.`)) {
-          return;
-        }
-
-        setRestoringDb(true);
-        const res = await restoreFullDatabaseJson(parsed);
-        const updated = await fetchSiteSettings();
-        setSettings(updated);
-        onSettingsUpdated(updated);
-        alert(res.message || 'Database restored successfully!');
-      } catch (err: any) {
-        alert('Failed to restore database: ' + (err.message || 'Invalid JSON file'));
-      } finally {
-        setRestoringDb(false);
-        e.target.value = '';
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  const handleResetData = async () => {
-    if (!confirm('Warning: This will reset all projects, media, and settings back to the initial PRD showcase seed state. Continue?')) {
-      return;
-    }
-
-    try {
-      await resetDatabaseToDefault();
-      const updated = await fetchSiteSettings();
-      setSettings(updated);
-      onSettingsUpdated(updated);
-      alert('Database successfully restored to default showcase state.');
-    } catch (err: any) {
-      alert('Failed to reset database: ' + err.message);
-    }
-  };
 
   if (loading || !settings) {
     return <div className="p-8 text-center font-mono text-sm text-[#6F6965]">Loading settings telemetry...</div>;
@@ -899,191 +783,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
         </button>
       </form>
 
-      {/* Database Backup, Export & Portability Zone */}
-      <div className="bg-white p-6 sm:p-8 rounded-xl border border-[#E8E3DD] space-y-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#E8E3DD]">
-          <div>
-            <h2 className="font-display font-bold text-base text-[#171514] flex items-center gap-2">
-              <Database className="w-4 h-4 text-[#9B0F06]" />
-              <span>Full Database Backup & Data Portability (`db.json`)</span>
-            </h2>
-            <p className="text-xs font-display text-[#6F6965] mt-0.5">
-              Export and download the complete portfolio database, view raw JSON telemetry, or restore from a backup.
-            </p>
-          </div>
-          <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-[#6F6965] font-semibold self-start sm:self-auto">
-            JSON Schema v1.0
-          </span>
-        </div>
 
-        {dbBackupSuccess && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono rounded-lg flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <span>{dbBackupSuccess}</span>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Download / Export Card */}
-          <div className="p-4 bg-[#FAF8F5] border border-[#E8E3DD] rounded-xl space-y-3">
-            <div className="flex items-center gap-2">
-              <FileJson className="w-4 h-4 text-[#9B0F06]" />
-              <h3 className="font-display font-semibold text-xs text-[#171514] uppercase tracking-wider">
-                Export & Download db.json
-              </h3>
-            </div>
-            <p className="text-xs text-[#6F6965] font-display leading-relaxed">
-              Download the entire CMS database containing all case studies, content blocks, experience items, media assets, and site configurations.
-            </p>
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <button
-                type="button"
-                onClick={handleDownloadDbJson}
-                disabled={downloadingDb}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#171514] hover:bg-[#9B0F06] text-white rounded-lg text-xs font-display font-semibold uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
-              >
-                {downloadingDb ? (
-                  <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Exporting...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download db.json</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleOpenJsonViewer}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded-lg text-xs font-display font-medium uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
-                title="Inspect or copy JSON in case browser download was suppressed"
-              >
-                <Eye className="w-3.5 h-3.5 text-[#6F6965]" />
-                <span>View / Copy JSON</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Restore Database Card */}
-          <div className="p-4 bg-[#FAF8F5] border border-[#E8E3DD] rounded-xl space-y-3">
-            <div className="flex items-center gap-2">
-              <Upload className="w-4 h-4 text-[#9B0F06]" />
-              <h3 className="font-display font-semibold text-xs text-[#171514] uppercase tracking-wider">
-                Restore Database from Backup
-              </h3>
-            </div>
-            <p className="text-xs text-[#6F6965] font-display leading-relaxed">
-              Upload a previously exported <code className="text-[#171514] font-mono text-[11px] bg-white px-1 py-0.5 rounded border border-[#E8E3DD]">db.json</code> file to restore all case studies, content blocks, and settings.
-            </p>
-            <div className="pt-1">
-              <label className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-[#FAF8F5] border border-[#E8E3DD] hover:border-[#171514] text-[#171514] rounded-lg text-xs font-display font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs">
-                <Upload className="w-3.5 h-3.5 text-[#9B0F06]" />
-                <span>{restoringDb ? 'Restoring...' : 'Upload & Restore db.json'}</span>
-                <input
-                  type="file"
-                  accept=".json,application/json"
-                  onChange={handleRestoreDbFile}
-                  disabled={restoringDb}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Database Reset Danger Zone */}
-      <div className="bg-red-50/50 p-6 rounded-xl border border-red-200 space-y-3">
-        <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-red-900 flex items-center gap-2">
-          <RefreshCw className="w-4 h-4 text-red-700" />
-          <span>Restore Default PRD Seed Data</span>
-        </h3>
-        <p className="text-xs font-mono text-red-700">
-          Reset all projects, experience items, and settings to the original "Warm Precision" showcase seed data.
-        </p>
-        <button
-          type="button"
-          onClick={handleResetData}
-          className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded text-xs font-mono font-semibold uppercase tracking-wider transition-colors cursor-pointer"
-        >
-          Reset Database to Seed
-        </button>
-      </div>
-
-      {/* Raw JSON Telemetry Viewer Modal */}
-      {jsonViewerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl border border-[#E8E3DD] shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E3DD] bg-[#FAF8F5]">
-              <div className="flex items-center gap-2.5">
-                <FileJson className="w-4 h-4 text-[#9B0F06]" />
-                <div>
-                  <h3 className="font-display font-bold text-sm text-[#171514]">
-                    Database Payload Telemetry (`db.json`)
-                  </h3>
-                  <p className="text-[11px] font-mono text-[#6F6965]">
-                    Complete raw JSON backup with projects, experience, settings, and media
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setJsonViewerModalOpen(false)}
-                className="p-1.5 text-[#6F6965] hover:text-[#171514] hover:bg-[#E8E3DD] rounded-lg transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto flex-1 bg-[#171514] text-[#E8E3DD]">
-              <pre className="font-mono text-xs leading-relaxed overflow-x-auto whitespace-pre">
-                {rawDbJson || '// Loading database JSON...'}
-              </pre>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex items-center justify-between px-6 py-3.5 border-t border-[#E8E3DD] bg-[#FAF8F5]">
-              <span className="text-[11px] font-mono text-[#6F6965]">
-                {rawDbJson ? `${Math.round(rawDbJson.length / 1024)} KB payload` : ''}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleCopyDbJson}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#171514] hover:bg-[#9B0F06] text-white rounded-lg text-xs font-display font-semibold transition-colors cursor-pointer"
-                >
-                  {copiedJson ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Copied to Clipboard!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Raw JSON</span>
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    downloadJsonFile('db.json', JSON.parse(rawDbJson));
-                  }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded-lg text-xs font-display font-semibold transition-colors cursor-pointer shadow-2xs"
-                >
-                  <Download className="w-3.5 h-3.5 text-[#9B0F06]" />
-                  <span>Download File</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Media Picker Modal */}
       <MediaPickerModal

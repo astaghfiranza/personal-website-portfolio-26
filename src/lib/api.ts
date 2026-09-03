@@ -436,36 +436,3 @@ export async function changePassword(
     throw new Error(error.message || 'Failed to update password');
   }
 }
-
-export async function resetDatabaseToDefault(): Promise<void> {
-  const res = await fetch('/api/reset-data', {
-    method: 'POST',
-    headers: getHeaders(true),
-  });
-  if (!res.ok) throw new Error('Failed to reset database');
-}
-
-export async function exportFullDatabaseJson(): Promise<any> {
-  const token = getAuthToken();
-  const res = await fetch(`/api/database/export?token=${token || ''}`, {
-    headers: getHeaders(true),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || 'Failed to export database');
-  }
-  return await res.json();
-}
-
-export async function restoreFullDatabaseJson(data: any): Promise<any> {
-  const res = await fetch('/api/database/restore', {
-    method: 'POST',
-    headers: getHeaders(true),
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || 'Failed to restore database');
-  }
-  return await res.json();
-}
