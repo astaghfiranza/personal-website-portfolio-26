@@ -33,6 +33,7 @@ interface BulkUploadFile {
 export const AdminMediaLibrary: React.FC = () => {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(24);
   const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
   
   // Single upload staged state (gives user time to edit title, caption, alt text before saving)
@@ -43,7 +44,7 @@ export const AdminMediaLibrary: React.FC = () => {
     altText: string;
     caption: string;
     type: 'image' | 'video';
-    size_kb: number;
+    size_kb?: number;
   } | null>(null);
 
   const [externalUrlInput, setExternalUrlInput] = useState('');
@@ -65,10 +66,10 @@ export const AdminMediaLibrary: React.FC = () => {
   const [editUrl, setEditUrl] = useState('');
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
-  const loadMedia = async () => {
+  const loadMedia = async (forceRefresh = false) => {
     try {
       setLoading(true);
-      const data = await fetchMedia();
+      const data = await fetchMedia({ forceRefresh });
       setMediaList(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load media assets');
@@ -782,10 +783,21 @@ export const AdminMediaLibrary: React.FC = () => {
 
       {/* Media Grid with Metadata Edit Capability */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-display font-bold text-sm text-[#171514] uppercase tracking-wider">
-            All Library Assets ({mediaList.length})
-          </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <h3 className="font-display font-bold text-sm text-[#171514] uppercase tracking-wider">
+              All Library Assets ({mediaList.length})
+            </h3>
+            <button
+              type="button"
+              onClick={() => loadMedia(true)}
+              disabled={loading}
+              title="Refresh media list"
+              className="p-1.5 text-[#6F6965] hover:text-[#9B0F06] hover:bg-white rounded-lg border border-[#E8E3DD] transition-colors cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#9B0F06]' : ''}`} />
+            </button>
+          </div>
           <span className="text-xs font-display text-[#6F6965]">
             Click "Edit Metadata" on any asset to customize captions or alt text
           </span>
@@ -807,8 +819,9 @@ export const AdminMediaLibrary: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {mediaList.map((item) => (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {mediaList.slice(0, visibleCount).map((item) => (
               <div
                 key={item.id}
                 className="bg-white border border-[#E8E3DD] rounded-xl overflow-hidden shadow-xs group flex flex-col justify-between hover:border-[#9B0F06]/50 transition-all"
@@ -819,8 +832,10 @@ export const AdminMediaLibrary: React.FC = () => {
                     <video src={item.url} controls className="w-full h-full object-cover" />
                   ) : (
                     <img
-                      src={item.url}
-                      alt={item.alt_text}
+                      src={item.thumbnail_url || item.url}
+                      alt={item.alt_text || item.title || 'Media asset'}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
@@ -898,7 +913,20 @@ export const AdminMediaLibrary: React.FC = () => {
               </div>
             ))}
           </div>
-        )}
+
+          {mediaList.length > visibleCount && (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 24)}
+                className="px-6 py-2.5 bg-white border border-[#E8E3DD] hover:border-[#9B0F06] hover:bg-[#FAF8F5] text-[#171514] text-xs font-display font-semibold uppercase tracking-wider rounded-lg transition-colors shadow-2xs cursor-pointer"
+              >
+                Load More Assets ({mediaList.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
+        </>
+      )}
       </div>
 
       {/* EDIT METADATA MODAL (Requirement 2) */}

@@ -290,19 +290,57 @@ export async function updateSiteSettings(
     throw new Error(error.message || 'Failed to update site settings');
   }
 }
+// Media In-Memory Cache with TTL & Specific Field Projection
+let mediaCache: MediaItem[] | null = null;
+let mediaCacheTimestamp = 0;
+const MEDIA_CACHE_TTL = 60 * 1000; // 60 seconds TTL
+
+export function invalidateMediaCache() {
+  mediaCache = null;
+  mediaCacheTimestamp = 0;
+}
+
 // Media API
-export async function fetchMedia(): Promise<MediaItem[]> {
-  const { data, error } = await supabase
+export async function fetchMedia(options?: {
+  limit?: number;
+  offset?: number;
+  forceRefresh?: boolean;
+}): Promise<MediaItem[]> {
+  const { limit, offset, forceRefresh = false } = options || {};
+
+  // Serve from memory cache if whole list was fetched and is still fresh
+  if (!forceRefresh && !limit && !offset && mediaCache && (Date.now() - mediaCacheTimestamp < MEDIA_CACHE_TTL)) {
+    return mediaCache;
+  }
+
+  // Optimize: query only required columns in proper order rather than unbounded wildcards
+  let query = supabase
     .from('media_assets')
-    .select('*')
+    .select('id, project_id, type, url, thumbnail_url, title, name, alt_text, caption, width, height, size_kb, created_at')
     .order('created_at', { ascending: false });
+
+  if (limit) {
+    const from = offset || 0;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Error fetching media:', error);
+    if (mediaCache) return mediaCache;
     throw new Error(error.message || 'Failed to fetch media assets');
   }
 
-  return data as MediaItem[];
+  const items = (data || []) as MediaItem[];
+
+  if (!limit && !offset) {
+    mediaCache = items;
+    mediaCacheTimestamp = Date.now();
+  }
+
+  return items;
 }
 
 export async function uploadMedia(
@@ -311,7 +349,7 @@ export async function uploadMedia(
   const { data: createdMedia, error } = await supabase
     .from('media_assets')
     .insert(data)
-    .select('*')
+    .select('id, project_id, type, url, thumbnail_url, title, name, alt_text, caption, width, height, size_kb, created_at')
     .single();
 
   if (error) {
@@ -319,8 +357,19 @@ export async function uploadMedia(
     throw new Error(error.message || 'Failed to upload media asset');
   }
 
-  return createdMedia as MediaItem;
+  const newItem = createdMedia as MediaItem;
+
+  // Optimistically update cache
+  if (mediaCache) {
+    mediaCache = [newItem, ...mediaCache.filter((m) => m.id !== newItem.id)];
+    mediaCacheTimestamp = Date.now();
+  } else {
+    invalidateMediaCache();
+  }
+
+  return newItem;
 }
+
 export async function updateMedia(
   id: string,
   data: Partial<MediaItem>
@@ -329,7 +378,7 @@ export async function updateMedia(
     .from('media_assets')
     .update(data)
     .eq('id', id)
-    .select('*')
+    .select('id, project_id, type, url, thumbnail_url, title, name, alt_text, caption, width, height, size_kb, created_at')
     .single();
 
   if (error) {
@@ -337,7 +386,15 @@ export async function updateMedia(
     throw new Error(error.message || 'Failed to update media asset metadata');
   }
 
-  return updatedMedia as MediaItem;
+  const updatedItem = updatedMedia as MediaItem;
+
+  // Update in cache
+  if (mediaCache) {
+    mediaCache = mediaCache.map((m) => (m.id === id ? { ...m, ...updatedItem } : m));
+    mediaCacheTimestamp = Date.now();
+  }
+
+  return updatedItem;
 }
 
 export async function deleteMedia(id: string): Promise<void> {
@@ -349,6 +406,12 @@ export async function deleteMedia(id: string): Promise<void> {
   if (error) {
     console.error('Error deleting media:', error);
     throw new Error(error.message || 'Failed to delete media asset');
+  }
+
+  // Remove from cache
+  if (mediaCache) {
+    mediaCache = mediaCache.filter((m) => m.id !== id);
+    mediaCacheTimestamp = Date.now();
   }
 }
 // Auth API

@@ -303,6 +303,24 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
           </div>
         )}
 
+        {project.tools && project.tools.length > 0 && (
+          <div className="mt-4 p-5 bg-[#FBF9F6] border border-[#E8E3DD] rounded-xl">
+            <div className="text-[11px] font-display uppercase tracking-wider text-[#6F6965] font-bold mb-3">
+              Tools
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-display">
+              {project.tools.map((item, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1.5 bg-white border border-[#E8E3DD] rounded-md text-[#171514] font-medium shadow-2xs"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 2. Impact Metrics Block */}
         {project.impact_metrics && project.impact_metrics.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
@@ -335,6 +353,25 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
             ))}
           </div>
         )}
+
+        {/* 4. Tools Block (Separate, Borderless - Displayed like tags) */}
+        {/*
+        {project.tools && project.tools.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-display">
+            <span className="text-[11px] uppercase tracking-wider font-bold text-[#6F6965] mr-1">
+              Tools:
+            </span>
+            {project.tools.map((tool, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1 bg-[#F0ECE6] text-[#171514] rounded-md text-xs font-medium"
+              >
+                {tool}
+              </span>
+            ))}
+          </div>
+        )}
+        */}
       </header>
 
       {/* Main Cover Image */}

@@ -282,6 +282,7 @@ export const initialProjects: Project[] = [
     seo_description: 'Designing mission-critical AI workflows, permission governance, and 200+ screens for enterprise banking clients.',
     og_image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80',
     tags: ['Enterprise SaaS', 'Design System'],
+    tools: ['Figma', 'Tokens Studio', 'React', 'Tailwind CSS', 'Linear'],
     deliverables: ['Multi-Tenant Tokens', '200+ Production Screens', 'Explainable AI Workflows'],
     impact_metrics: [
       { label: 'Enterprise Modules', value: '20+' },
@@ -359,6 +360,7 @@ export const initialProjects: Project[] = [
     seo_description: 'How an entrepreneurial product design experiment transformed artisan coffee beans into an interactive brew guide.',
     og_image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80',
     tags: ['Venture Building', 'Brand Identity'],
+    tools: ['Figma', 'FigJam', 'Notion', 'Miro', 'After Effects'],
     deliverables: ['Brand Guidelines', 'Packaging Architecture', 'Interactive Brew Companion PWA'],
     impact_metrics: [
       { label: 'Companion Scans', value: '1,800+' },
@@ -427,6 +429,7 @@ export const initialProjects: Project[] = [
     seo_title: 'Urban Transit Pulse — Accessible Transit UI & Wayfinding',
     seo_description: 'Optimizing high-density station transit signage and digital platform screens for low-vision and non-native commuters.',
     tags: ['Transit UX', 'Accessibility'],
+    tools: ['Figma', 'Whimsical', 'Maze', 'Illustrator'],
     deliverables: ['Wayfinding Design Audit', 'High-Contrast Signage Tokens', 'Geometric Line Markers'],
     impact_metrics: [
       { label: 'Station Commuters Surveyed', value: '320+' },
@@ -475,6 +478,7 @@ export const initialProjects: Project[] = [
     seo_title: 'Spatial Micro-CAD — Touch-First Parametric Canvas Experiment',
     seo_description: 'Exploring precision mathematical sketching on tablet interfaces without modal fatigue.',
     tags: ['Canvas API', 'Interaction Design'],
+    tools: ['HTML5 Canvas', 'Figma', 'TypeScript', 'Tailwind CSS'],
     deliverables: ['WebGL Constraint Solver', 'Touch Gesture Matrix', 'Open-Source Demo'],
     impact_metrics: [
       { label: 'Frame Rate Target', value: '60 FPS' },
@@ -516,6 +520,7 @@ export const initialProjects: Project[] = [
     seo_title: 'Public Policy Analytics — Aththar Portfolio',
     seo_description: 'Turning dense econometric data into executive decision levers for ministerial leadership.',
     tags: ['Data Visualization', 'Civic Tech'],
+    tools: ['Figma', 'D3.js', 'Observable', 'Mapbox'],
     deliverables: ['Choropleth Visualizer', '38 Provincial Models', 'Executive Briefing Views'],
     impact_metrics: [
       { label: 'Provincial Regions', value: '38 Regions' },

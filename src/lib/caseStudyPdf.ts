@@ -139,16 +139,17 @@ export async function exportProjectToPdf(project: Project): Promise<void> {
     y = metricCardY + 66;
   }
 
-  // Tags & Deliverables Summary
-  if ((project.tags && project.tags.length > 0) || (project.deliverables && project.deliverables.length > 0)) {
+  // Tags, Tools & Deliverables Summary
+  if ((project.tags && project.tags.length > 0) || (project.deliverables && project.deliverables.length > 0) || (project.tools && project.tools.length > 0)) {
     checkPageBreak(30);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(111, 105, 101);
 
     const deliverablesText = project.deliverables?.length ? `Deliverables: ${project.deliverables.join(', ')}` : '';
+    const toolsText = project.tools?.length ? `Tools: ${project.tools.join(', ')}` : '';
     const tagsText = project.tags?.length ? `Tags: ${project.tags.map((t) => `#${t}`).join(' ')}` : '';
-    const combined = [deliverablesText, tagsText].filter(Boolean).join('  |  ');
+    const combined = [deliverablesText, toolsText, tagsText].filter(Boolean).join('  |  ');
 
     if (combined) {
       const lines = doc.splitTextToSize(combined, contentWidth);

@@ -49,26 +49,19 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
   // Staged single upload (gives the user time to edit title, alt text, and caption before saving/using)
   const [stagedUpload, setStagedUpload] = useState<StagedUpload | null>(null);
   const [externalUrlInput, setExternalUrlInput] = useState('');
+  const [visibleCount, setVisibleCount] = useState(24);
 
   // Editable fields for browse tab selection override
   const [browseAltOverride, setBrowseAltOverride] = useState('');
   const [browseCaptionOverride, setBrowseCaptionOverride] = useState('');
 
-  useEffect(() => {
-    if (isOpen) {
-      loadMedia();
-      setSelectedItem(null);
-      setStagedUpload(null);
-      setExternalUrlInput('');
-      setError(null);
-    }
-  }, [isOpen]);
-
-  const loadMedia = async () => {
+  const loadMedia = async (forceRefresh = false) => {
     try {
-      setLoading(true);
+      if (mediaList.length === 0 || forceRefresh) {
+        setLoading(true);
+      }
       setError(null);
-      const data = await fetchMedia();
+      const data = await fetchMedia({ forceRefresh });
       setMediaList(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load media assets');
@@ -76,6 +69,19 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      if (mediaList.length === 0) {
+        loadMedia();
+      }
+      setSelectedItem(null);
+      setStagedUpload(null);
+      setExternalUrlInput('');
+      setError(null);
+      setVisibleCount(24);
+    }
+  }, [isOpen]);
 
   // Step 1: User selects a file -> Read & Stage it (DO NOT save yet!)
   const handleFileStaging = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,15 +256,26 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
           </div>
 
           {activeTab === 'browse' && (
-            <div className="relative mb-2 w-64">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6F6965]" />
-              <input
-                type="text"
-                placeholder="Search assets..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded-lg text-xs font-display text-[#171514] placeholder:text-[#6F6965]/70 focus:outline-none focus:border-[#9B0F06]"
-              />
+            <div className="flex items-center gap-2 mb-2">
+              <div className="relative w-64">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6F6965]" />
+                <input
+                  type="text"
+                  placeholder="Search assets..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded-lg text-xs font-display text-[#171514] placeholder:text-[#6F6965]/70 focus:outline-none focus:border-[#9B0F06]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => loadMedia(true)}
+                disabled={loading}
+                title="Refresh media list"
+                className="p-1.5 text-[#6F6965] hover:text-[#9B0F06] hover:bg-[#FAF8F5] rounded-lg border border-[#E8E3DD] transition-colors cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#9B0F06]' : ''}`} />
+              </button>
             </div>
           )}
         </div>
@@ -298,7 +315,7 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                  {filteredList.map((item) => {
+                  {filteredList.slice(0, visibleCount).map((item) => {
                     const isSelected = selectedItem?.id === item.id;
                     return (
                       <div
@@ -324,10 +341,11 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                             <video src={item.url} className="w-full h-full object-cover" />
                           ) : (
                             <img
-                              src={item.url}
-                              alt={item.alt_text}
+                              src={item.thumbnail_url || item.url}
+                              alt={item.alt_text || item.title || 'Media item'}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
+                              decoding="async"
                             />
                           )}
                           {isSelected && (
@@ -357,6 +375,18 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                     );
                   })}
                 </div>
+
+                {filteredList.length > visibleCount && (
+                  <div className="flex justify-center pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount((prev) => prev + 24)}
+                      className="px-4 py-2 bg-white border border-[#E8E3DD] hover:border-[#9B0F06] hover:bg-[#FAF8F5] text-[#171514] text-xs font-display font-semibold uppercase tracking-wider rounded-lg transition-colors shadow-2xs cursor-pointer"
+                    >
+                      Load More ({filteredList.length - visibleCount} remaining)
+                    </button>
+                  </div>
+                )}
 
                 {/* Selected Item Review & Customization */}
                 {selectedItem && (

@@ -32,6 +32,7 @@ import {
   FileText,
   Download,
   RefreshCw,
+  ListOrdered,
 } from 'lucide-react';
 import { Project, ContentBlock, ProjectCategory, ProjectStatus, BlockType } from '../../types';
 import { createProject, updateProject, uploadMedia } from '../../lib/api';
@@ -75,10 +76,29 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
   const [featuredOrder, setFeaturedOrder] = useState(project?.featured_order || 1);
   const [status, setStatus] = useState<ProjectStatus>(project?.status || 'DRAFT');
   const [tagsInput, setTagsInput] = useState(project?.tags?.join(', ') || '');
+  const [toolsInput, setToolsInput] = useState(project?.tools?.join(', ') || '');
   const [deliverablesInput, setDeliverablesInput] = useState(project?.deliverables?.join(', ') || '');
   const [impactMetrics, setImpactMetrics] = useState<Array<{ label: string; value: string }>>(
     project?.impact_metrics || [{ label: 'Triage Time', value: '-85%' }]
   );
+
+  // Block List Modal State & Scroll Highlight
+  const [blockListModalOpen, setBlockListModalOpen] = useState(false);
+  const [highlightedBlockId, setHighlightedBlockId] = useState<string | null>(null);
+
+  const scrollToBlock = (blockId: string) => {
+    setBlockListModalOpen(false);
+    setTimeout(() => {
+      const element = document.getElementById(`editor-block-${blockId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightedBlockId(blockId);
+        setTimeout(() => {
+          setHighlightedBlockId(null);
+        }, 2200);
+      }
+    }, 120);
+  };
 
   // SEO State
   const [seoTitle, setSeoTitle] = useState(project?.seo_title || '');
@@ -123,6 +143,11 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const toolsArray = toolsInput
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
     const deliverablesArray = deliverablesInput
       .split(',')
       .map((d) => d.trim())
@@ -147,6 +172,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       featured_order: Number(featuredOrder) || 1,
       status: status || 'DRAFT',
       tags: tagsArray,
+      tools: toolsArray,
       deliverables: deliverablesArray,
       impact_metrics: impactMetrics.filter((m) => m.label && m.value),
       seo_title: seoTitle || `${title} — Aththar Product Design`,
@@ -195,6 +221,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
     if (importedData.featured_order) setFeaturedOrder(importedData.featured_order);
     if (importedData.status) setStatus(importedData.status as ProjectStatus);
     if (importedData.tags) setTagsInput(importedData.tags.join(', '));
+    if (importedData.tools) setToolsInput(importedData.tools.join(', '));
     if (importedData.deliverables) setDeliverablesInput(importedData.deliverables.join(', '));
     if (importedData.impact_metrics) setImpactMetrics(importedData.impact_metrics);
     if (importedData.seo_title) setSeoTitle(importedData.seo_title);
@@ -511,6 +538,11 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const toolsArray = toolsInput
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
     const deliverablesArray = deliverablesInput
       .split(',')
       .map((d) => d.trim())
@@ -534,6 +566,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       featured_order: Number(featuredOrder) || 1,
       status: targetStatus,
       tags: tagsArray,
+      tools: toolsArray,
       deliverables: deliverablesArray,
       impact_metrics: impactMetrics.filter((m) => m.label && m.value),
       seo_title: seoTitle || `${title} — Aththar Product Design`,
@@ -572,6 +605,11 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const toolsArray = toolsInput
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
     const deliverablesArray = deliverablesInput
       .split(',')
       .map((d) => d.trim())
@@ -595,6 +633,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       featured_order: Number(featuredOrder) || 1,
       status: status || 'DRAFT',
       tags: tagsArray,
+      tools: toolsArray,
       deliverables: deliverablesArray,
       impact_metrics: impactMetrics.filter((m) => m.label && m.value),
       seo_title: seoTitle || `${title} — Aththar Product Design`,
@@ -684,6 +723,17 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
           </button>
 
           <div className="h-5 w-[1px] bg-[#E8E3DD] mx-0.5 hidden sm:block" /> */}
+
+          {/* Block List Trigger */}
+          {/* <button
+            type="button"
+            onClick={() => setBlockListModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#E8E3DD] hover:border-[#9B0F06] hover:bg-[#FAF8F5] text-[#171514] text-xs font-display uppercase tracking-wider rounded-lg transition-colors font-medium shadow-2xs cursor-pointer"
+            title="View list of blocks and scroll to any block"
+          >
+            <ListOrdered className="w-3.5 h-3.5 text-[#9B0F06]" />
+            <span>Block List ({blocks.length})</span>
+          </button> */}
 
           {/* Preview Button */}
           <button
@@ -965,6 +1015,23 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
               </span>
             </div>
 
+            {/* Tools (Separate Field, comma-separated) */}
+            <div>
+              <label className="block text-xs font-display uppercase text-[#171514] font-semibold mb-1">
+                Tools (comma-separated)
+              </label>
+              <input
+                type="text"
+                value={toolsInput}
+                onChange={(e) => setToolsInput(e.target.value)}
+                placeholder="Figma, FigJam, React, Tailwind CSS, Maze, Notion"
+                className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#E8E3DD] rounded-md text-xs font-display text-[#171514] focus:ring-2 focus:ring-[#9B0F06]"
+              />
+              <span className="text-[11px] font-display text-[#6F6965] mt-1 block">
+                Input tools separated by commas. Displayed on the front end like tags.
+              </span>
+            </div>
+
             {/* Tags (Project Cards Display) */}
             <div>
               <label className="block text-xs font-display uppercase text-[#171514] font-semibold mb-1">
@@ -1042,10 +1109,20 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                 </p>
               </div>
 
-              {/* Block Count */}
-              <span className="font-display font-bold text-xs text-[#9B0F06] bg-[#FDF2F1] px-2.5 py-1 rounded border border-[#9B0F06]/20">
-                {blocks.length} Blocks
-              </span>
+              {/* Block Count & Block List Button */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setBlockListModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-[#FAF8F5] border border-[#E8E3DD] hover:border-[#9B0F06] text-[#171514] text-xs font-display font-semibold uppercase tracking-wider rounded-lg transition-colors shadow-2xs cursor-pointer"
+                >
+                  <ListOrdered className="w-3.5 h-3.5 text-[#9B0F06]" />
+                  <span>Block List</span>
+                </button>
+                <span className="font-display font-bold text-xs text-[#9B0F06] bg-[#FDF2F1] px-2.5 py-1 rounded border border-[#9B0F06]/20">
+                  {blocks.length} Blocks
+                </span>
+              </div>
             </div>
 
             {/* Block Toolbar */}
@@ -1145,11 +1222,18 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
 
             {/* Blocks List */}
             <div className="space-y-5">
-              {blocks.map((block, index) => (
-                <div
-                  key={block.id}
-                  className="p-5 bg-[#FAF8F5] rounded-xl border border-[#E8E3DD] space-y-3 relative group"
-                >
+              {blocks.map((block, index) => {
+                const blockKey = block.id || index.toString();
+                return (
+                  <div
+                    key={blockKey}
+                    id={`editor-block-${blockKey}`}
+                    className={`p-5 rounded-xl border space-y-3 relative group transition-all duration-300 ${
+                      highlightedBlockId === blockKey
+                        ? 'bg-white border-[#9B0F06] ring-3 ring-[#9B0F06]/25 shadow-lg'
+                        : 'bg-[#FAF8F5] border-[#E8E3DD]'
+                    }`}
+                  >
                   {/* Block Header */}
                   <div className="flex items-center justify-between text-xs font-display text-[#6F6965] pb-2 border-b border-[#E8E3DD]">
                     <span className="font-bold text-[#171514] uppercase tracking-wider flex items-center gap-1.5">
@@ -1816,7 +1900,8 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                     </div>
                   )}
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
         </div>
@@ -1843,6 +1928,92 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
         onImportSuccess={() => { }}
         onLoadIntoEditor={handleLoadImportedProject}
       />
+
+      {/* Block List Modal / Popup */}
+      {blockListModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#171514]/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => setBlockListModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-md w-full border border-[#E8E3DD] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-[#E8E3DD] flex items-center justify-between bg-[#FAF8F5]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#FDF2F1] border border-[#9B0F06]/20 flex items-center justify-center">
+                  <ListOrdered className="w-4 h-4 text-[#9B0F06]" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-sm text-[#171514] uppercase tracking-wider">
+                    Block List ({blocks.length})
+                  </h3>
+                  <p className="text-[11px] font-display text-[#6F6965]">
+                    Click any block to scroll directly to it in editor
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBlockListModalOpen(false)}
+                className="p-1.5 text-[#6F6965] hover:text-[#171514] hover:bg-white rounded-lg border border-transparent hover:border-[#E8E3DD] transition-colors cursor-pointer"
+                title="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal List of Blocks */}
+            <div className="p-4 overflow-y-auto max-h-[58vh] space-y-2">
+              {blocks.length === 0 ? (
+                <div className="py-8 text-center text-xs font-display text-[#6F6965]">
+                  No content blocks added yet. Use the Insert toolbar to add blocks.
+                </div>
+              ) : (
+                blocks.map((block, index) => {
+                  const blockKey = block.id || index.toString();
+                  return (
+                    <button
+                      key={blockKey}
+                      type="button"
+                      onClick={() => scrollToBlock(blockKey)}
+                      className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-[#E8E3DD] hover:border-[#9B0F06] hover:bg-[#FAF8F5] transition-all text-left cursor-pointer group bg-white shadow-2xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-7 h-7 rounded-lg bg-[#FAF8F5] border border-[#E8E3DD] flex items-center justify-center font-display font-bold text-xs text-[#9B0F06] group-hover:bg-white group-hover:border-[#9B0F06]/40 transition-colors">
+                          #{index + 1}
+                        </span>
+                        <span className="font-display font-semibold text-xs text-[#171514] uppercase tracking-wider">
+                          {block.type}
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-display text-[#6F6965] group-hover:text-[#9B0F06] transition-colors font-medium flex items-center gap-1">
+                        <span>Scroll</span>
+                        <span>&rarr;</span>
+                      </span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3.5 border-t border-[#E8E3DD] bg-[#FAF8F5] flex items-center justify-between">
+              <span className="text-[11px] font-display text-[#6F6965]">
+                {blocks.length} total {blocks.length === 1 ? 'block' : 'blocks'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setBlockListModalOpen(false)}
+                className="px-3.5 py-1.5 bg-white border border-[#E8E3DD] hover:bg-[#F7F4F0] text-[#171514] text-xs font-display font-medium rounded-lg transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast Notification */}
       {toastMessage && (

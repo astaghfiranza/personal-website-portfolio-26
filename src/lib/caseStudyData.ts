@@ -114,6 +114,7 @@ export function exportProjectAsJson(project: Project): void {
       status: project.status || 'DRAFT',
       tags: project.tags || [],
       deliverables: project.deliverables || [],
+      tools: project.tools || [],
       impact_metrics: project.impact_metrics || [],
       seo_title: project.seo_title || '',
       seo_description: project.seo_description || '',
@@ -151,6 +152,7 @@ export function exportAllProjectsAsJson(projects: Project[]): void {
       status: project.status || 'DRAFT',
       tags: project.tags || [],
       deliverables: project.deliverables || [],
+      tools: project.tools || [],
       impact_metrics: project.impact_metrics || [],
       seo_title: project.seo_title || '',
       seo_description: project.seo_description || '',
@@ -368,6 +370,14 @@ export function validateAndParseCaseStudyJson(rawInput: string | unknown): Valid
       deliverables = item.deliverables.split(',').map((d: string) => d.trim()).filter(Boolean);
     }
 
+    // Process Tools
+    let tools: string[] = [];
+    if (Array.isArray(item.tools)) {
+      tools = item.tools.map(String).filter(Boolean);
+    } else if (typeof item.tools === 'string') {
+      tools = item.tools.split(',').map((t: string) => t.trim()).filter(Boolean);
+    }
+
     const project: Partial<Project> = {
       title,
       slug,
@@ -387,6 +397,7 @@ export function validateAndParseCaseStudyJson(rawInput: string | unknown): Valid
       status: ['PUBLISHED', 'ARCHIVED', 'DRAFT'].includes(item.status) ? item.status : 'DRAFT',
       tags,
       deliverables,
+      tools,
       impact_metrics: impactMetrics,
       seo_title: item.seo_title || `${title} — Aththar Product Design`,
       seo_description: item.seo_description || item.short_description || '',
