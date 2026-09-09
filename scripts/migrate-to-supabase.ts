@@ -292,6 +292,7 @@ for (const project of db.projects ?? []) {
             tags: project.tags ?? [],
             deliverables:
                 project.deliverables ?? [],
+            tools: project.tools ?? [],
             impact_metrics:
                 project.impact_metrics ?? [],
             content_json: content,

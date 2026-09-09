@@ -2,7 +2,7 @@ export type ProjectStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 
 export type ProjectCategory = 'PRODUCT' | 'UX' | 'BUILD' | 'EXPERIMENT' | string;
 
-export type BlockType = 
+export type BlockType =
   | 'heading'
   | 'paragraph'
   | 'link'
@@ -75,6 +75,7 @@ export interface Project {
   og_image?: string;
   tags: string[];
   deliverables?: string[];
+  tools?: string[];
   impact_metrics?: Array<{ label: string; value: string }>;
   content_json: ContentBlock[];
 }
