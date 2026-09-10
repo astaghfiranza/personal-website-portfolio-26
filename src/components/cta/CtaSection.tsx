@@ -8,7 +8,7 @@ interface CtaSectionProps {
 }
 
 export const CtaSection: React.FC<CtaSectionProps> = ({ settings }) => {
-  const cleanPhone = settings.whatsapp_number.replace(/[^0-9]/g, '');
+  const cleanPhone = (settings?.whatsapp_number || '').replace(/[^0-9]/g, '');
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
     'Hi Aththar, I saw your portfolio and would like to discuss a project / role.'
   )}`;

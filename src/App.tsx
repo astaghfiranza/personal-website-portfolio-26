@@ -27,15 +27,37 @@ import {
   duplicateProject,
   reorderFeaturedProjects,
 } from './lib/api';
-import { initialSiteSettings, initialProjects, initialExperience, initialMedia } from './data/seedData';
+
+const defaultSiteSettings: SiteSettings = {
+  name: 'Aththar',
+  title: 'Product Designer',
+  headline: '',
+  supporting_copy: '',
+  metadata_label: '',
+  whatsapp_number: '',
+  email: '',
+  email_subject: '',
+  email_body: '',
+  case_study_email_subject: '',
+  case_study_email_body: '',
+  linkedin_url: '',
+  github_url: '',
+  location: '',
+  availability_status: '',
+  bio_intro: '',
+  hero_image: '',
+  hero_image_alt: '',
+  hero_image_tag: '',
+  hero_image_badge: '',
+};
 
 export default function App() {
   // App-level State
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [experience, setExperience] = useState<ExperienceItem[]>(initialExperience);
-  const [settings, setSettings] = useState<SiteSettings>(initialSiteSettings);
-  const [media, setMedia] = useState<MediaItem[]>(initialMedia);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [experience, setExperience] = useState<ExperienceItem[]>([]);
+  const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const [adminTab, setAdminTab] = useState<AdminTab>('dashboard');
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
@@ -64,10 +86,24 @@ export default function App() {
       setIsAdminAuthenticated(isAuth);
 
       const [projectsData, expData, settingsData, mediaData] = await Promise.all([
-        fetchProjects(isAuth ? 'all' : 'published').catch(() => initialProjects),
-        fetchExperience().catch(() => initialExperience),
-        fetchSiteSettings().catch(() => initialSiteSettings),
-        isAuth ? fetchMedia().catch(() => initialMedia) : Promise.resolve(initialMedia),
+        fetchProjects(isAuth ? 'all' : 'published').catch((err) => {
+          console.error('Error fetching projects:', err);
+          return [] as Project[];
+        }),
+        fetchExperience().catch((err) => {
+          console.error('Error fetching experience:', err);
+          return [] as ExperienceItem[];
+        }),
+        fetchSiteSettings().catch((err) => {
+          console.error('Error fetching site settings:', err);
+          return defaultSiteSettings;
+        }),
+        isAuth
+          ? fetchMedia().catch((err) => {
+              console.error('Error fetching media:', err);
+              return [] as MediaItem[];
+            })
+          : Promise.resolve([] as MediaItem[]),
       ]);
 
       setProjects(projectsData);
@@ -141,6 +177,18 @@ export default function App() {
       alert('Failed to reorder featured projects: ' + err.message);
     }
   };
+
+  // Initial loading state: load until loading is cleared and finished
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FBF9F6] flex flex-col items-center justify-center p-6 select-none">
+        <div className="w-9 h-9 rounded-full border-2 border-[#9B0F06] border-t-transparent animate-spin mb-4" />
+        <p className="font-display text-xs uppercase tracking-widest text-[#6F6965] font-semibold">
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   // Determine current active view
   // 1. Dedicated All Work Route: /work or /all-work or /projects

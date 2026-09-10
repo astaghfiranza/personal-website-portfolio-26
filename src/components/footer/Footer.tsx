@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, onScrollToTop, onOpenA
     return () => clearInterval(interval);
   }, []);
 
-  const whatsappUrl = `https://wa.me/${settings.whatsapp_number.replace(/[^0-9]/g, '')}`;
+  const whatsappUrl = `https://wa.me/${(settings?.whatsapp_number || '').replace(/[^0-9]/g, '')}`;
 
   return (
     <footer className="bg-[#F7F4F0] border-t border-[#E8E3DD] pt-16 pb-12 px-4 sm:px-6 lg:px-8">
