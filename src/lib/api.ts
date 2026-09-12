@@ -269,7 +269,7 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
   try {
     const { data, error } = await supabase
       .from('site_settings')
-      .select('id, name, title, headline, supporting_copy, metadata_label, whatsapp_number, email, email_subject, email_body, case_study_email_subject, case_study_email_body, linkedin_url, github_url, location, availability_status, bio_intro, hero_image, hero_image_alt, hero_image_tag, hero_image_badge, hero_image_object_fit, hero_image_object_position, hero_image_aspect_ratio, hero_image_crop_zoom, hero_image_crop_x, hero_image_crop_y')
+      .select('id, name, title, headline, supporting_copy, metadata_label, whatsapp_number, email, email_subject, email_body, case_study_email_subject, case_study_email_body, linkedin_url, github_url, location, availability_status, bio_intro, hero_image, hero_image_alt, hero_image_tag, hero_image_badge, hero_image_object_fit, hero_image_object_position,  hero_image_crop_x, hero_image_crop_y')
       .eq('id', 'default')
       .single();
 
