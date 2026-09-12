@@ -63,25 +63,34 @@ export interface Project {
   client: string;
   year: string;
   duration: string;
+
   thumbnail_url: string;
   local_thumbnail_url?: string;
   thumbnail?: string;
+
   featured: boolean;
   featured_order: number;
   status: ProjectStatus;
-  created_at: string;
-  updated_at: string;
+
+  created_at?: string;
+  updated_at?: string;
   published_at?: string;
+
   seo_title?: string;
   seo_description?: string;
   og_image?: string;
+
   tags: string[];
   deliverables?: string[];
   tools?: string[];
-  impact_metrics?: Array<{ label: string; value: string }>;
-  content_json: ContentBlock[];
-}
+  impact_metrics?: Array<{
+    label: string;
+    value: string;
+  }>;
 
+  // Case Study content is fetched from Supabase on demand.
+  content_json?: ContentBlock[];
+}
 export interface MediaItem {
   id: string;
   projectId?: string;
