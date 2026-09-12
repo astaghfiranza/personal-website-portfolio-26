@@ -163,6 +163,7 @@ export const AllWorkPage: React.FC<AllWorkPageProps> = ({
                 <div className="relative aspect-[16/10] overflow-hidden bg-[#F7F4F0] border-b border-[#E8E3DD]">
                   <ImageWithPlaceholder
                     src={project.thumbnail_url}
+                    fallbackSrc={project.local_thumbnail_url || project.thumbnail || '/images/projects/project-default.webp'}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     loading="lazy"

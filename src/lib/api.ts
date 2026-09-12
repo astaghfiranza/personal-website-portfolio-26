@@ -1,5 +1,12 @@
 import { supabase } from './supabase';
 import { Project, ExperienceItem, SiteSettings, MediaItem, ProjectCategory, ProjectStatus } from '../types';
+import {
+  saveLocalHero,
+  getSavedLocalHero,
+  saveProjectThumbnail,
+  getSavedProjectThumbnail,
+} from '../data/staticAssets';
+import { projects as fallbackProjects, siteSettings as fallbackSettings } from '../data/data';
 
 const TOKEN_KEY = 'aththar_portfolio_admin_token';
 
@@ -59,7 +66,19 @@ export async function fetchProjects(
       throw new Error('Failed to fetch projects');
     }
 
-    return (data || []) as unknown as Project[];
+    const rawProjects = (data || []) as unknown as Project[];
+    const fallbackMap = new Map(fallbackProjects.map((p) => [p.slug, p]));
+
+    return rawProjects.map((proj) => {
+      const fallbackMatch = fallbackMap.get(proj.slug) || fallbackProjects.find((p) => p.id === proj.id);
+      const savedThumb = getSavedProjectThumbnail(proj.slug) || getSavedProjectThumbnail(proj.id);
+      const localThumb = proj.local_thumbnail_url || savedThumb || fallbackMatch?.local_thumbnail_url || '/images/projects/project-default.webp';
+      return {
+        ...proj,
+        local_thumbnail_url: localThumb,
+        thumbnail: proj.thumbnail || localThumb,
+      };
+    });
   } catch (err) {
     console.error('Error fetching projects:', err);
     throw err;
@@ -92,7 +111,16 @@ export async function fetchProjectBySlug(
       throw new Error('This project seems to have disappeared.');
     }
 
-    return data as Project;
+    const proj = data as Project;
+    const fallbackMatch = fallbackProjects.find((p) => p.slug === slug || p.id === proj.id);
+    const savedThumb = getSavedProjectThumbnail(proj.slug) || getSavedProjectThumbnail(proj.id);
+    const localThumb = proj.local_thumbnail_url || savedThumb || fallbackMatch?.local_thumbnail_url || '/images/projects/project-default.webp';
+
+    return {
+      ...proj,
+      local_thumbnail_url: localThumb,
+      thumbnail: proj.thumbnail || localThumb,
+    };
   } catch (err) {
     console.error('Error fetching project by slug:', err);
     throw err;
@@ -104,10 +132,20 @@ export async function createProject(
 ): Promise<Project> {
   const projectId = `proj-${Date.now()}`;
 
+  if (data.slug && data.local_thumbnail_url) {
+    saveProjectThumbnail(data.slug, data.local_thumbnail_url);
+  }
+  if (data.local_thumbnail_url) {
+    saveProjectThumbnail(projectId, data.local_thumbnail_url);
+  }
+
+  // Separate non-DB fields to protect against schema rejections
+  const { local_thumbnail_url, thumbnail, ...dbPayload } = data as any;
+
   const { data: createdProject, error } = await supabase
     .from('projects')
     .insert({
-      ...data,
+      ...dbPayload,
       id: projectId,
     })
     .select('*')
@@ -118,16 +156,29 @@ export async function createProject(
     throw new Error(error.message || 'Failed to create project');
   }
 
-  return createdProject as Project;
+  return {
+    ...createdProject,
+    local_thumbnail_url: data.local_thumbnail_url,
+    thumbnail: data.thumbnail || data.local_thumbnail_url,
+  } as Project;
 }
 
 export async function updateProject(
   id: string,
   data: Partial<Project>
 ): Promise<Project> {
+  if (data.slug && data.local_thumbnail_url) {
+    saveProjectThumbnail(data.slug, data.local_thumbnail_url);
+  }
+  if (data.local_thumbnail_url) {
+    saveProjectThumbnail(id, data.local_thumbnail_url);
+  }
+
+  const { local_thumbnail_url, thumbnail, ...dbPayload } = data as any;
+
   const { data: updatedProject, error } = await supabase
     .from('projects')
-    .update(data)
+    .update(dbPayload)
     .eq('id', id)
     .select('*')
     .single();
@@ -137,7 +188,11 @@ export async function updateProject(
     throw new Error(error.message || 'Failed to update project');
   }
 
-  return updatedProject as Project;
+  return {
+    ...updatedProject,
+    local_thumbnail_url: data.local_thumbnail_url,
+    thumbnail: data.thumbnail || data.local_thumbnail_url,
+  } as Project;
 }
 
 export async function deleteProject(id: string): Promise<void> {
@@ -278,7 +333,13 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
       throw new Error('Failed to fetch site settings');
     }
 
-    return data as SiteSettings;
+    const rawSettings = data as SiteSettings;
+    const savedHero = getSavedLocalHero();
+    return {
+      ...rawSettings,
+      local_hero_image: rawSettings.local_hero_image || savedHero || fallbackSettings.local_hero_image || '/images/hero-default.webp',
+      heroImage: rawSettings.heroImage || rawSettings.local_hero_image || savedHero || '/images/hero-default.webp',
+    };
   } catch (err) {
     console.error('Error fetching site settings:', err);
     throw err;
@@ -288,9 +349,19 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
 export async function updateSiteSettings(
   settings: Partial<SiteSettings>
 ): Promise<void> {
+  if (settings.local_hero_image) {
+    saveLocalHero(settings.local_hero_image);
+  }
+  if (settings.heroImage && !settings.local_hero_image) {
+    saveLocalHero(settings.heroImage);
+  }
+
+  // Strip non-DB fields before sending to Supabase
+  const { local_hero_image, heroImage, ...dbPayload } = settings as any;
+
   const { error } = await supabase
     .from('site_settings')
-    .update(settings)
+    .update(dbPayload)
     .eq('id', 'default');
 
   if (error) {

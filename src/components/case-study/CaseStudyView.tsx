@@ -389,6 +389,7 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
         <div className="rounded-2xl overflow-hidden border border-[#E8E3DD] bg-[#F7F4F0] shadow-md aspect-[16/9]">
           <ImageWithPlaceholder
             src={project.thumbnail_url}
+            fallbackSrc={project.local_thumbnail_url || project.thumbnail || '/images/projects/project-default.webp'}
             alt={project.title}
             className="w-full h-full object-cover"
           />

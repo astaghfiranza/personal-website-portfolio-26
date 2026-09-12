@@ -302,6 +302,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="relative w-full h-[360px] xl:h-[400px] rounded-3xl overflow-hidden border border-[#E8E3DD] bg-[#FAF8F5]">
                   <ImageWithPlaceholder
                     src={settings.hero_image}
+                    fallbackSrc={settings.local_hero_image || settings.heroImage || '/images/hero-default.webp'}
                     alt={settings.hero_image_alt || 'Product Design Studio & Interface Architecture'}
                     style={{
                       objectFit: (settings.hero_image_object_fit || 'cover') as any,

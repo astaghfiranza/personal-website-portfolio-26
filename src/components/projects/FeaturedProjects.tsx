@@ -50,6 +50,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
               <div className="lg:col-span-7 overflow-hidden rounded-xl bg-[#F7F4F0] border border-[#E8E3DD] shadow-[0_4px_30px_-15px_rgba(23,21,20,0.06)] relative aspect-[16/10]">
                 <ImageWithPlaceholder
                   src={project.thumbnail_url}
+                  fallbackSrc={project.local_thumbnail_url || project.thumbnail || '/images/projects/project-default.webp'}
                   alt={project.title}
                   className="w-full h-full object-cover object-center transform group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                   loading="lazy"

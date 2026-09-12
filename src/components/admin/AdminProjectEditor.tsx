@@ -36,6 +36,11 @@ import {
 } from 'lucide-react';
 import { Project, ContentBlock, ProjectCategory, ProjectStatus, BlockType } from '../../types';
 import { createProject, updateProject, uploadMedia } from '../../lib/api';
+import {
+  LOCAL_PROJECT_THUMBNAILS,
+  saveProjectThumbnail,
+  getSavedProjectThumbnail,
+} from '../../data/staticAssets';
 import { MediaPickerModal } from './MediaPickerModal';
 import { WysiwygTextarea } from './WysiwygTextarea';
 import { CategorySelectDropdown } from './CategorySelectDropdown';
@@ -72,6 +77,14 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
     project?.thumbnail_url ||
     'https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=1400&q=80'
   );
+  const [localThumbnailUrl, setLocalThumbnailUrl] = useState<string>(() => {
+    return (
+      project?.local_thumbnail_url ||
+      project?.thumbnail ||
+      (project?.slug ? getSavedProjectThumbnail(project.slug) : '') ||
+      '/images/projects/project-default.webp'
+    );
+  });
   const [featured, setFeatured] = useState(project?.featured || false);
   const [featuredOrder, setFeaturedOrder] = useState(project?.featured_order || 1);
   const [status, setStatus] = useState<ProjectStatus>(project?.status || 'DRAFT');
@@ -168,6 +181,8 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       year,
       duration,
       thumbnail_url: thumbnailUrl,
+      local_thumbnail_url: localThumbnailUrl,
+      thumbnail: localThumbnailUrl,
       featured,
       featured_order: Number(featuredOrder) || 1,
       status: status || 'DRAFT',
@@ -562,6 +577,8 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       year,
       duration,
       thumbnail_url: thumbnailUrl,
+      local_thumbnail_url: localThumbnailUrl,
+      thumbnail: localThumbnailUrl,
       featured,
       featured_order: Number(featuredOrder) || 1,
       status: targetStatus,
@@ -629,6 +646,8 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
       year,
       duration,
       thumbnail_url: thumbnailUrl,
+      local_thumbnail_url: localThumbnailUrl,
+      thumbnail: localThumbnailUrl,
       featured,
       featured_order: Number(featuredOrder) || 1,
       status: status || 'DRAFT',
@@ -962,6 +981,87 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                   </button>
                 </div>
               )}
+
+              {/* Static Fallback Thumbnail (Repository Asset for Fast Initial Public Render) */}
+              <div className="p-3.5 bg-[#FAF8F5] rounded-xl border border-[#E8E3DD] space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <ImageIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
+                    <span className="text-xs font-display uppercase tracking-wider text-[#171514] font-bold">
+                      Static Fallback Thumbnail
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-white border border-[#E8E3DD] text-[#9B0F06] font-bold rounded">
+                    Local Fast Render
+                  </span>
+                </div>
+
+                <p className="text-[11px] font-display text-[#6F6965] leading-relaxed">
+                  Referenced from <code className="font-mono bg-white px-1 py-0.5 rounded border border-[#E8E3DD] text-[10px]">data.ts</code> and rendered immediately on the public website before Supabase connects. Never uploaded to Supabase.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-display uppercase text-[#6F6965] font-semibold mb-1">
+                      Preset Repository Asset
+                    </label>
+                    <select
+                      value={localThumbnailUrl}
+                      onChange={(e) => setLocalThumbnailUrl(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-mono text-[#171514]"
+                    >
+                      {LOCAL_PROJECT_THUMBNAILS.map((asset) => (
+                        <option key={asset.path} value={asset.path}>
+                          {asset.label} ({asset.path})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-display uppercase text-[#6F6965] font-semibold mb-1">
+                      Custom Local Asset Path
+                    </label>
+                    <input
+                      type="text"
+                      value={localThumbnailUrl}
+                      onChange={(e) => setLocalThumbnailUrl(e.target.value)}
+                      placeholder="/images/projects/project-1.webp"
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-mono text-[#171514]"
+                    />
+                  </div>
+                </div>
+
+                {/* Preview of local asset & Action to copy to main thumbnail */}
+                <div className="flex items-center justify-between pt-2 border-t border-[#E8E3DD]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-8 rounded border border-[#E8E3DD] overflow-hidden bg-[#F7F4F0] shrink-0">
+                      <img
+                        src={localThumbnailUrl}
+                        alt="Local fallback thumbnail preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/projects/project-default.webp';
+                        }}
+                      />
+                    </div>
+                    <div className="text-[11px] font-mono text-[#6F6965] truncate max-w-[200px]" title={localThumbnailUrl}>
+                      {localThumbnailUrl}
+                    </div>
+                  </div>
+
+                  {thumbnailUrl !== localThumbnailUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setThumbnailUrl(localThumbnailUrl)}
+                      className="text-[11px] font-display font-semibold text-[#9B0F06] hover:underline cursor-pointer"
+                      title="Also set this local WebP image as the primary thumbnail URL"
+                    >
+                      Use as Active Thumbnail
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Featured Toggle */}

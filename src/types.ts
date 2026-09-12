@@ -64,6 +64,8 @@ export interface Project {
   year: string;
   duration: string;
   thumbnail_url: string;
+  local_thumbnail_url?: string;
+  thumbnail?: string;
   featured: boolean;
   featured_order: number;
   status: ProjectStatus;
@@ -114,6 +116,8 @@ export interface SiteSettings {
   availability_status: string;
   bio_intro: string;
   hero_image?: string;
+  local_hero_image?: string;
+  heroImage?: string;
   hero_image_alt?: string;
   hero_image_tag?: string;
   hero_image_badge?: string;
