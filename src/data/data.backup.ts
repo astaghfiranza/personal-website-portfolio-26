@@ -21,8 +21,8 @@ export const siteSettings: SiteSettings = {
   local_hero_image: '/images/hero-default.webp',
   heroImage: '/images/hero-default.webp',
   hero_image_alt: 'Product Design Studio & Interface Architecture',
-  hero_image_tag: 'Warm Precision Studio',
-  hero_image_badge: 'JKT · 2026'
+  hero_image_tag: 'Aththar Astaghfiranza',
+  hero_image_badge: '2023-2026'
 };
 
 export const experience: ExperienceItem[] = [

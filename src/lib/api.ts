@@ -425,10 +425,17 @@ export async function fetchMedia(options?: {
 export async function uploadMedia(
   data: Partial<MediaItem>
 ): Promise<MediaItem> {
+  const mediaId = data.id || `media-${Date.now()}-${crypto.randomUUID()}`;
+
   const { data: createdMedia, error } = await supabase
     .from('media_assets')
-    .insert(data)
-    .select('id, project_id, type, url, thumbnail_url, title, name, alt_text, caption, width, height, size_kb, created_at')
+    .insert({
+      ...data,
+      id: mediaId,
+    })
+    .select(
+      'id, project_id, type, url, thumbnail_url, title, name, alt_text, caption, width, height, size_kb, created_at'
+    )
     .single();
 
   if (error) {
@@ -438,9 +445,11 @@ export async function uploadMedia(
 
   const newItem = createdMedia as MediaItem;
 
-  // Optimistically update cache
   if (mediaCache) {
-    mediaCache = [newItem, ...mediaCache.filter((m) => m.id !== newItem.id)];
+    mediaCache = [
+      newItem,
+      ...mediaCache.filter((m) => m.id !== newItem.id),
+    ];
     mediaCacheTimestamp = Date.now();
   } else {
     invalidateMediaCache();
