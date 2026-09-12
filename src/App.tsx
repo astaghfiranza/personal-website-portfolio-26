@@ -27,42 +27,25 @@ import {
   duplicateProject,
   reorderFeaturedProjects,
 } from './lib/api';
-
-const defaultSiteSettings: SiteSettings = {
-  name: 'Aththar',
-  title: 'Product Designer',
-  headline: '',
-  supporting_copy: '',
-  metadata_label: '',
-  whatsapp_number: '',
-  email: '',
-  email_subject: '',
-  email_body: '',
-  case_study_email_subject: '',
-  case_study_email_body: '',
-  linkedin_url: '',
-  github_url: '',
-  location: '',
-  availability_status: '',
-  bio_intro: '',
-  hero_image: '',
-  hero_image_alt: '',
-  hero_image_tag: '',
-  hero_image_badge: '',
-};
+import {
+  projects as initialProjects,
+  experience as initialExperience,
+  siteSettings as initialSettings,
+  media as initialMedia,
+} from './data/data';
 
 export default function App() {
-  // App-level State
+  // App-level State (Public frontend initializes from data.ts IMMEDIATELY)
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [experience, setExperience] = useState<ExperienceItem[]>([]);
-  const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
-  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [experience, setExperience] = useState<ExperienceItem[]>(initialExperience);
+  const [settings, setSettings] = useState<SiteSettings>(initialSettings);
+  const [media, setMedia] = useState<MediaItem[]>(initialMedia);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const [adminTab, setAdminTab] = useState<AdminTab>('dashboard');
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isRevealedFromHero, setIsRevealedFromHero] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [adminAuthChecking, setAdminAuthChecking] = useState<boolean>(true);
 
   // Sync route on popstate (browser back/forward)
   useEffect(() => {
@@ -79,7 +62,9 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // Initial Data Fetching
+  // Background Data Fetching & Hydration
+  // Connects to Supabase in the background; never blocks public frontend rendering.
+  // Updates state when Supabase completes; retains data.ts if connection fails.
   const reloadData = useCallback(async () => {
     try {
       const isAuth = await checkAuth();
@@ -87,33 +72,42 @@ export default function App() {
 
       const [projectsData, expData, settingsData, mediaData] = await Promise.all([
         fetchProjects(isAuth ? 'all' : 'published').catch((err) => {
-          console.error('Error fetching projects:', err);
-          return [] as Project[];
+          console.warn('Background Supabase fetchProjects error; retaining data.ts:', err);
+          return null;
         }),
         fetchExperience().catch((err) => {
-          console.error('Error fetching experience:', err);
-          return [] as ExperienceItem[];
+          console.warn('Background Supabase fetchExperience error; retaining data.ts:', err);
+          return null;
         }),
         fetchSiteSettings().catch((err) => {
-          console.error('Error fetching site settings:', err);
-          return defaultSiteSettings;
+          console.warn('Background Supabase fetchSiteSettings error; retaining data.ts:', err);
+          return null;
         }),
         isAuth
           ? fetchMedia().catch((err) => {
-              console.error('Error fetching media:', err);
-              return [] as MediaItem[];
+              console.warn('Admin Supabase fetchMedia error:', err);
+              return null;
             })
-          : Promise.resolve([] as MediaItem[]),
+          : Promise.resolve(null),
       ]);
 
-      setProjects(projectsData);
-      setExperience(expData);
-      setSettings(settingsData);
-      setMedia(mediaData);
+      // Hydrate public frontend with live Supabase data once loaded
+      if (projectsData && projectsData.length > 0) {
+        setProjects(projectsData);
+      }
+      if (expData && expData.length > 0) {
+        setExperience(expData);
+      }
+      if (settingsData && settingsData.name) {
+        setSettings(settingsData);
+      }
+      if (mediaData && mediaData.length > 0) {
+        setMedia(mediaData);
+      }
     } catch (err) {
-      console.error('Error during data initialization:', err);
+      console.warn('Background Supabase synchronization error; retaining data.ts:', err);
     } finally {
-      setLoading(false);
+      setAdminAuthChecking(false);
     }
   }, []);
 
@@ -178,13 +172,14 @@ export default function App() {
     }
   };
 
-  // Initial loading state: load until loading is cleared and finished
-  if (loading) {
+  // For Admin only: show loading state while verifying admin authentication session
+  // Public pages NEVER wait for Supabase and render immediately from data.ts
+  if (adminAuthChecking && currentPath.startsWith('/admin')) {
     return (
       <div className="min-h-screen bg-[#FBF9F6] flex flex-col items-center justify-center p-6 select-none">
         <div className="w-9 h-9 rounded-full border-2 border-[#9B0F06] border-t-transparent animate-spin mb-4" />
         <p className="font-display text-xs uppercase tracking-widest text-[#6F6965] font-semibold">
-          Loading...
+          Authenticating...
         </p>
       </div>
     );

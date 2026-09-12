@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Filter, Sparkles } from 'lucide-react';
 import { Project, ProjectCategory } from '../../types';
+import { ImageWithPlaceholder } from '../common/ImageWithPlaceholder';
 
 interface AllProjectsProps {
   projects: Project[];
@@ -131,7 +132,7 @@ export const AllProjects: React.FC<AllProjectsProps> = ({
           >
             {/* Thumbnail */}
             <div className="relative aspect-[16/10] overflow-hidden bg-[#F7F4F0] border-b border-[#E8E3DD]">
-              <img
+              <ImageWithPlaceholder
                 src={project.thumbnail_url}
                 alt={project.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"

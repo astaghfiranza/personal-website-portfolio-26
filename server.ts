@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
-import { initialProjects, initialExperience, initialSiteSettings, initialMedia } from './src/data/seedData';
+import { initialProjects, initialExperience, initialSiteSettings, initialMedia } from './src/data/data';
 import { Project, ExperienceItem, SiteSettings, MediaItem, User } from './src/types';
 
 const PORT = 3000;

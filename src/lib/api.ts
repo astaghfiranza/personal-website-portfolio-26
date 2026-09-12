@@ -34,9 +34,14 @@ export async function fetchProjects(
   category?: string
 ): Promise<Project[]> {
   try {
+    // Select only needed fields for public frontend; full record for admin
+    const selectFields = status === 'published'
+      ? 'id, title, slug, short_description, category, project_type, role, organization, client, year, duration, thumbnail_url, featured, featured_order, status, created_at, updated_at, published_at, seo_title, seo_description, og_image, tags, deliverables, tools, impact_metrics'
+      : '*';
+
     let query = supabase
       .from('projects')
-      .select('*')
+      .select(selectFields)
       .order('featured_order', { ascending: true });
 
     if (status === 'published') {
@@ -54,7 +59,7 @@ export async function fetchProjects(
       throw new Error('Failed to fetch projects');
     }
 
-    return data as Project[];
+    return (data || []) as unknown as Project[];
   } catch (err) {
     console.error('Error fetching projects:', err);
     throw err;
@@ -210,7 +215,7 @@ export async function fetchExperience(): Promise<ExperienceItem[]> {
   try {
     const { data, error } = await supabase
       .from('experience')
-      .select('*')
+      .select('id, category, category_label, title, role, period, organization, location, description, highlights, metrics, tags, link, sort_order')
       .order('sort_order', { ascending: true });
 
     if (error) {
@@ -218,7 +223,10 @@ export async function fetchExperience(): Promise<ExperienceItem[]> {
       throw new Error('Failed to fetch experience items');
     }
 
-    return data as ExperienceItem[];
+    return (data || []).map((item: any) => ({
+      ...item,
+      categoryLabel: item.category_label || item.categoryLabel || item.category,
+    })) as ExperienceItem[];
   } catch (err) {
     console.error('Error fetching experience:', err);
     throw err;
@@ -261,7 +269,7 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
   try {
     const { data, error } = await supabase
       .from('site_settings')
-      .select('*')
+      .select('id, name, title, headline, supporting_copy, metadata_label, whatsapp_number, email, email_subject, email_body, case_study_email_subject, case_study_email_body, linkedin_url, github_url, location, availability_status, bio_intro, hero_image, hero_image_alt, hero_image_tag, hero_image_badge, hero_image_object_fit, hero_image_object_position, hero_image_aspect_ratio, hero_image_crop_zoom, hero_image_crop_x, hero_image_crop_y')
       .eq('id', 'default')
       .single();
 

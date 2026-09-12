@@ -4,6 +4,8 @@ import { Project, ContentBlock, SiteSettings } from '../../types';
 import { fetchProjectBySlug, fetchProjects } from '../../lib/api';
 import { renderRichMarkdownText } from '../../lib/richText';
 import { buildMailtoUrl } from '../../lib/emailUtils';
+import { ImageWithPlaceholder } from '../common/ImageWithPlaceholder';
+import { projects as localProjects } from '../../data/data';
 
 interface CaseStudyViewProps {
   slug: string;
@@ -53,8 +55,16 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.message || 'This project seems to have disappeared.');
-          setLoading(false);
+          const fallbackProject = localProjects.find((p) => p.slug === slug);
+          if (fallbackProject) {
+            setProject(fallbackProject);
+            setAllProjects(localProjects);
+            setLoading(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setError(err.message || 'This project seems to have disappeared.');
+            setLoading(false);
+          }
         }
       });
 
@@ -377,7 +387,7 @@ export const CaseStudyView: React.FC<CaseStudyViewProps> = ({
       {/* Main Cover Image */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 my-12">
         <div className="rounded-2xl overflow-hidden border border-[#E8E3DD] bg-[#F7F4F0] shadow-md aspect-[16/9]">
-          <img
+          <ImageWithPlaceholder
             src={project.thumbnail_url}
             alt={project.title}
             className="w-full h-full object-cover"
@@ -776,7 +786,7 @@ const RenderContentBlock: React.FC<{ block: ContentBlock }> = ({ block }) => {
       return (
         <figure className="my-8 space-y-2">
           <div className="rounded-xl overflow-hidden border border-[#E8E3DD] bg-[#F7F4F0]">
-            <img
+            <ImageWithPlaceholder
               src={block.url}
               alt={block.alt || 'Case study visual asset'}
               className="w-full h-auto object-cover"

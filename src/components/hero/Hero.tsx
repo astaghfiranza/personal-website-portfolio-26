@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowDown, Sparkles, ArrowRight, Check } from 'lucide-react';
 import { SiteSettings } from '../../types';
+import { ImageWithPlaceholder } from '../common/ImageWithPlaceholder';
 
 interface HeroProps {
   settings: SiteSettings;
@@ -299,8 +300,8 @@ export const Hero: React.FC<HeroProps> = ({
               <div className="relative w-full max-w-md mx-auto pt-2 pb-8">
                 {/* Photo Card Frame - No inner nor outer shadow as per revision */}
                 <div className="relative w-full h-[360px] xl:h-[400px] rounded-3xl overflow-hidden border border-[#E8E3DD] bg-[#FAF8F5]">
-                  <img
-                    src={settings.hero_image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80'}
+                  <ImageWithPlaceholder
+                    src={settings.hero_image}
                     alt={settings.hero_image_alt || 'Product Design Studio & Interface Architecture'}
                     style={{
                       objectFit: (settings.hero_image_object_fit || 'cover') as any,

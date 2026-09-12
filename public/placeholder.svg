@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF9F6" />
+      <stop offset="50%" stop-color="#F5F2ED" />
+      <stop offset="100%" stop-color="#ECE7E0" />
+    </linearGradient>
+    <pattern id="dotGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#DCD5CC" />
+    </pattern>
+    <pattern id="diagLines" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="60" stroke="#E6E0D8" stroke-width="1" stroke-opacity="0.4" />
+    </pattern>
+  </defs>
+
+  <!-- Background Base with warm neutral studio gradient -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+  <rect width="100%" height="100%" fill="url(#dotGrid)" opacity="0.65" />
+  <rect width="100%" height="100%" fill="url(#diagLines)" />
+
+  <!-- Outer Framing Lines -->
+  <rect x="24" y="24" width="1152" height="702" rx="16" fill="none" stroke="#E2DCD4" stroke-width="1.5" stroke-dasharray="8 6" />
+
+  <!-- Corner Registration Marks -->
+  <path d="M 40 56 L 40 40 L 56 40" stroke="#9B0F06" stroke-width="2" stroke-linecap="square" />
+  <path d="M 1160 56 L 1160 40 L 1144 40" stroke="#9B0F06" stroke-width="2" stroke-linecap="square" />
+  <path d="M 40 694 L 40 710 L 56 710" stroke="#9B0F06" stroke-width="2" stroke-linecap="square" />
+  <path d="M 1160 694 L 1160 710 L 1144 710" stroke="#9B0F06" stroke-width="2" stroke-linecap="square" />
+
+  <!-- Centered Iconic Graphics -->
+  <g transform="translate(600, 375)">
+    <!-- Central Pill Container -->
+    <rect x="-140" y="-80" width="280" height="160" rx="24" fill="#FFFFFF" stroke="#E8E3DD" stroke-width="1.5" filter="drop-shadow(0 10px 25px rgba(23, 21, 20, 0.05))" />
+    
+    <!-- Minimalist Lens / Framing Icon -->
+    <circle cx="0" cy="-20" r="28" fill="#FDF2F1" stroke="#9B0F06" stroke-width="1.5" stroke-opacity="0.4" />
+    
+    <!-- Camera/Visual Aperture Glyph -->
+    <path d="M -14 -14 L -8 -26 L 8 -26 L 14 -14 L 18 -14 C 20.2 -14 22 -12.2 22 -10 L 22 4 C 22 6.2 20.2 8 18 8 L -18 8 C -20.2 8 -22 6.2 -22 4 L -22 -10 C -22 -12.2 -20.2 -14 -18 -14 Z" 
+          fill="none" stroke="#9B0F06" stroke-width="2" stroke-linejoin="round" />
+    <circle cx="0" cy="-3" r="6" stroke="#9B0F06" stroke-width="2" fill="none" />
+
+    <!-- Label Typography -->
+    <text y="38" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" letter-spacing="2.5" fill="#171514" text-transform="uppercase">
+      MEDIA PREVIEW
+    </text>
+    <text y="54" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="500" letter-spacing="1.5" fill="#6F6965">
+      LOCAL PLACEHOLDER
+    </text>
+  </g>
+</svg>

@@ -1,12 +1,12 @@
 import { Project, ExperienceItem, SiteSettings, MediaItem } from '../types';
 
-export const initialSiteSettings: SiteSettings = {
+export const siteSettings: SiteSettings = {
   name: 'Aththar',
   title: 'Product Designer',
   headline: 'I DESIGN PRODUCTS THAT MOVE.',
   supporting_copy: 'Product designer building digital products, experiments, and things worth exploring.',
   metadata_label: 'PRODUCT DESIGNER · DIGITAL PRODUCTS · ENTERPRISE · EXPERIMENTS',
-  whatsapp_number: '6281234567890', // Configurable WhatsApp
+  whatsapp_number: '6281234567890',
   email: 'aththar.designer@gmail.com',
   email_subject: 'Project Inquiry & Collaboration',
   email_body: 'Hi Aththar,\n\nI came across your portfolio and would like to discuss a project / role with you.\n\nBest regards,',
@@ -23,7 +23,7 @@ export const initialSiteSettings: SiteSettings = {
   hero_image_badge: 'JKT · 2026'
 };
 
-export const initialExperience: ExperienceItem[] = [
+export const experience: ExperienceItem[] = [
   {
     id: 'exp-1',
     category: '01 WORK',
@@ -38,9 +38,6 @@ export const initialExperience: ExperienceItem[] = [
       'Architected 20+ complex enterprise features from zero-to-one, translating regulatory requirements into intuitive UI flows.',
       'Designed and documented over 200+ production-ready screens with strict edge-case validation and multi-role permission matrices.',
       'Established and maintained an accessible, tokenized design system of 50+ reusable components used by 12 cross-functional engineers.',
-      'Reduced average document triage and compliance review time by 42% through focused contextual AI workflows.',
-      'Reduced average document triage and compliance review time by 42% through focused contextual AI workflows.',
-      'Reduced average document triage and compliance review time by 42% through focused contextual AI workflows.',
       'Reduced average document triage and compliance review time by 42% through focused contextual AI workflows.'
     ],
     metrics: [
@@ -150,7 +147,7 @@ export const initialExperience: ExperienceItem[] = [
   }
 ];
 
-export const initialProjects: Project[] = [
+export const projects: Project[] = [
   {
     id: 'proj-1',
     title: 'Mambu Radar',
@@ -174,6 +171,7 @@ export const initialProjects: Project[] = [
     seo_description: 'How we turned subjective olfactory complaints into verified civic telemetry with a 2-tap reporting interface.',
     og_image: 'https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=1400&q=80',
     tags: ['Citizen Tech', 'Sensory UX'],
+    tools: ['Figma', 'React', 'Tailwind CSS', 'Mapbox', 'Notion'],
     deliverables: ['Olfactory Taxonomy', '2-Tap Mobile Web', 'Inspector Triage Portal'],
     impact_metrics: [
       { label: 'Verified Reports', value: '4,200+' },
@@ -235,7 +233,7 @@ export const initialProjects: Project[] = [
       {
         id: 'b-8',
         type: 'quote',
-        text: 'The first solution we prototyped had 14 nuanced chemical subcategories. It looked great on a desktop mockup. In field trials on windy nights, it completely failed. Simplifying to a 5-quadrant tactile tactile wheel increased field submission velocity by 3.4x.',
+        text: 'The first solution we prototyped had 14 nuanced chemical subcategories. It looked great on a desktop mockup. In field trials on windy nights, it completely failed. Simplifying to a 5-quadrant tactile wheel increased field submission velocity by 3.4x.',
         author: 'Aththar',
         role: 'Lead Product Designer'
       },
@@ -542,7 +540,7 @@ export const initialProjects: Project[] = [
   }
 ];
 
-export const initialMedia: MediaItem[] = [
+export const media: MediaItem[] = [
   {
     id: 'med-1',
     projectId: 'proj-1',
@@ -580,3 +578,9 @@ export const initialMedia: MediaItem[] = [
     size_kb: 510
   }
 ];
+
+// Compatibility aliases
+export const initialSiteSettings = siteSettings;
+export const initialExperience = experience;
+export const initialProjects = projects;
+export const initialMedia = media;
