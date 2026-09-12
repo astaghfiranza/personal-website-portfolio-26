@@ -14,9 +14,8 @@ const ExperienceCardItem: React.FC<{ item: ExperienceItem }> = ({ item }) => {
     <div className="p-6 sm:p-7 bg-[#FBF9F6] border border-[#E8E3DD] rounded-xl transition-all duration-200 hover:border-[#9B0F06]/40 shadow-xs">
       {/* Header: Company/Title, Role, Organization, Location, Period */}
       <div
-        className={`flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 ${
-          isExpanded ? 'pb-5 mb-5 border-b border-[#E8E3DD]' : ''
-        }`}
+        className={`flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 ${isExpanded ? 'pb-5 mb-5 border-b border-[#E8E3DD]' : ''
+          }`}
       >
         <div>
           <h3 className="text-xl sm:text-2xl font-bold text-[#171514] font-display">
@@ -120,9 +119,8 @@ const ExperienceCardItem: React.FC<{ item: ExperienceItem }> = ({ item }) => {
         >
           <span>{isExpanded ? 'View Less' : 'View More'}</span>
           <ChevronDown
-            className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-y-0.5 ${
-              isExpanded ? 'rotate-180 !group-hover:-translate-y-0.5' : ''
-            }`}
+            className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-y-0.5 ${isExpanded ? 'rotate-180 !group-hover:-translate-y-0.5' : ''
+              }`}
           />
         </button>
       </div>
@@ -170,11 +168,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
             <button
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
-              className={`flex flex-col p-4 text-left rounded-lg border transition-all duration-200 ${
-                isActive
+              className={`flex flex-col p-4 text-left rounded-lg border transition-all duration-200 ${isActive
                   ? 'bg-[#171514] text-white border-[#171514] shadow-sm'
                   : 'bg-[#F7F4F0] text-[#171514] border-[#E8E3DD] hover:border-[#9B0F06]/50'
-              }`}
+                }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className={`font-display text-xs font-bold ${isActive ? 'text-[#9B0F06]' : 'text-[#6F6965]'}`}>

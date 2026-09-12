@@ -497,114 +497,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
               </div>
 
               {/* Sub-Section: Local / Static Hero Image (Fast Public Render & Offline Fallback) */}
-              <div className="p-4 bg-[#FAF8F5] border border-[#E8E3DD] rounded-xl space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-[#E8E3DD]">
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4 text-[#9B0F06]" />
-                    <span className="text-xs font-display font-bold uppercase text-[#171514]">
-                      Local Static Hero Asset (data.ts / Public Repository)
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-white border border-[#E8E3DD] text-[#9B0F06] font-bold rounded self-start sm:self-auto">
-                    Instant Initial Render
-                  </span>
-                </div>
 
-                <p className="text-xs font-display text-[#6F6965] leading-relaxed">
-                  This image is referenced directly from <code className="font-mono bg-white px-1 py-0.5 rounded border border-[#E8E3DD] text-[11px]">data.ts</code> and bundled locally in the project (<code className="font-mono bg-white px-1 py-0.5 rounded border border-[#E8E3DD] text-[11px]">/public/images</code>). It displays <strong>immediately</strong> on the public website without waiting for Supabase. If Supabase is slow or unavailable, this image remains visible.
-                </p>
-
-                {/* Visual Selection Grid of Preset Local Hero Assets */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {LOCAL_HERO_ASSETS.map((asset) => {
-                    const currentSelected = settings.local_hero_image || settings.heroImage || '/images/hero-default.webp';
-                    const isSelected = currentSelected === asset.path;
-                    return (
-                      <div
-                        key={asset.path}
-                        onClick={() => {
-                          setSettings({
-                            ...settings,
-                            local_hero_image: asset.path,
-                            heroImage: asset.path,
-                          });
-                        }}
-                        className={`group cursor-pointer rounded-lg border p-2.5 transition-all text-left flex flex-col justify-between ${
-                          isSelected
-                            ? 'border-[#9B0F06] bg-white ring-2 ring-[#9B0F06]/15 shadow-xs'
-                            : 'border-[#E8E3DD] bg-white/70 hover:bg-white hover:border-[#171514]/30'
-                        }`}
-                      >
-                        <div className="space-y-2">
-                          <div className="relative aspect-16/10 rounded overflow-hidden border border-[#E8E3DD] bg-[#F7F4F0]">
-                            <img
-                              src={asset.path}
-                              alt={asset.label}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            {isSelected && (
-                              <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-[#9B0F06] text-white text-[9px] font-mono font-bold rounded flex items-center gap-1">
-                                <Check className="w-2.5 h-2.5" />
-                                <span>ACTIVE</span>
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <div className="text-xs font-display font-bold text-[#171514]">{asset.label}</div>
-                            <div className="text-[10px] font-display text-[#6F6965] line-clamp-2 mt-0.5">{asset.description}</div>
-                          </div>
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-[#E8E3DD]/60 flex items-center justify-between text-[10px] font-mono text-[#6F6965]">
-                          <span className="truncate max-w-[130px]">{asset.path}</span>
-                          <span className={isSelected ? 'text-[#9B0F06] font-bold' : 'text-[#6F6965]'}>
-                            {isSelected ? 'Selected' : 'Select'}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Custom Path Input & Action to Apply to Primary Hero Image */}
-                <div className="pt-2 border-t border-[#E8E3DD] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <label className="block text-[10px] font-display uppercase text-[#6F6965] font-semibold mb-1">
-                      Custom Local Static Image Path
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.local_hero_image || settings.heroImage || '/images/hero-default.webp'}
-                      onChange={(e) =>
-                        setSettings({
-                          ...settings,
-                          local_hero_image: e.target.value,
-                          heroImage: e.target.value,
-                        })
-                      }
-                      placeholder="/images/hero-default.webp"
-                      className="w-full px-3 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-mono text-[#171514]"
-                    />
-                  </div>
-
-                  {settings.hero_image !== (settings.local_hero_image || settings.heroImage || '/images/hero-default.webp') && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const localVal = settings.local_hero_image || settings.heroImage || '/images/hero-default.webp';
-                        setSettings({
-                          ...settings,
-                          hero_image: localVal,
-                          heroImage: localVal,
-                        });
-                      }}
-                      className="self-end sm:self-auto inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-[#FAF8F5] border border-[#9B0F06] text-[#9B0F06] rounded text-xs font-display font-semibold transition-colors cursor-pointer shadow-2xs"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Use as Primary Hero Image as well</span>
-                    </button>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -840,8 +733,8 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ onSettingsUpdated 
         {passwordMsg && (
           <div
             className={`p-3 rounded text-xs font-mono ${passwordMsg.type === 'error'
-                ? 'bg-red-50 text-red-700 border border-red-200'
-                : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+              ? 'bg-red-50 text-red-700 border border-red-200'
+              : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
               }`}
           >
             {passwordMsg.text}

@@ -1026,7 +1026,7 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                       type="text"
                       value={localThumbnailUrl}
                       onChange={(e) => setLocalThumbnailUrl(e.target.value)}
-                      placeholder="/images/projects/project-1.webp"
+                      placeholder="/images/projects/project-default.webp"
                       className="w-full px-2.5 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-mono text-[#171514]"
                     />
                   </div>
@@ -1328,680 +1328,679 @@ export const AdminProjectEditor: React.FC<AdminProjectEditorProps> = ({
                   <div
                     key={blockKey}
                     id={`editor-block-${blockKey}`}
-                    className={`p-5 rounded-xl border space-y-3 relative group transition-all duration-300 ${
-                      highlightedBlockId === blockKey
+                    className={`p-5 rounded-xl border space-y-3 relative group transition-all duration-300 ${highlightedBlockId === blockKey
                         ? 'bg-white border-[#9B0F06] ring-3 ring-[#9B0F06]/25 shadow-lg'
                         : 'bg-[#FAF8F5] border-[#E8E3DD]'
-                    }`}
+                      }`}
                   >
-                  {/* Block Header */}
-                  <div className="flex items-center justify-between text-xs font-display text-[#6F6965] pb-2 border-b border-[#E8E3DD]">
-                    <span className="font-bold text-[#171514] uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="text-[#9B0F06]">#{index + 1}</span>
-                      <span>·</span>
-                      <span>{block.type}</span>
-                    </span>
+                    {/* Block Header */}
+                    <div className="flex items-center justify-between text-xs font-display text-[#6F6965] pb-2 border-b border-[#E8E3DD]">
+                      <span className="font-bold text-[#171514] uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="text-[#9B0F06]">#{index + 1}</span>
+                        <span>·</span>
+                        <span>{block.type}</span>
+                      </span>
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => moveBlock(index, 'up')}
-                        disabled={index === 0}
-                        title="Move Up"
-                        className="p-1 hover:text-[#171514] disabled:opacity-30 transition-colors"
-                      >
-                        <MoveUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveBlock(index, 'down')}
-                        disabled={index === blocks.length - 1}
-                        title="Move Down"
-                        className="p-1 hover:text-[#171514] disabled:opacity-30 transition-colors"
-                      >
-                        <MoveDown className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => duplicateBlock(index)}
-                        title="Duplicate Block"
-                        className="p-1 text-[#6F6965] hover:text-[#9B0F06] transition-colors"
-                      >
-                        <Copy className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => removeBlock(index)}
-                        title="Delete Block"
-                        className="p-1 text-red-500 hover:text-red-700 ml-1 transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Heading Block */}
-                  {block.type === 'heading' && (
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        <select
-                          value={block.level || 2}
-                          onChange={(e) =>
-                            updateBlock(index, { level: Number(e.target.value) as 1 | 2 | 3 })
-                          }
-                          className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
-                        >
-                          <option value="1">H1 (Major Section)</option>
-                          <option value="2">H2 (Subsection)</option>
-                          <option value="3">H3 (Minor Subsection)</option>
-                        </select>
-                        <input
-                          type="text"
-                          value={block.text || ''}
-                          onChange={(e) => updateBlock(index, { text: e.target.value })}
-                          placeholder="Section heading title..."
-                          className="flex-1 px-3 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Paragraph Block */}
-                  {block.type === 'paragraph' && (
-                    <WysiwygTextarea
-                      value={block.text || ''}
-                      onChange={(val) => updateBlock(index, { text: val })}
-                      placeholder="Write your case study narrative here... Use the Link and formatting tools above for rich inline formatting."
-                      rows={4}
-                    />
-                  )}
-
-                  {/* Quote Block */}
-                  {block.type === 'quote' && (
-                    <div className="space-y-2">
-                      <WysiwygTextarea
-                        value={block.text || ''}
-                        onChange={(val) => updateBlock(index, { text: val })}
-                        placeholder="Quote text..."
-                        rows={2}
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <input
-                          type="text"
-                          placeholder="Author Name"
-                          value={block.author || ''}
-                          onChange={(e) => updateBlock(index, { author: e.target.value })}
-                          className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Author Role / Title"
-                          value={block.role || ''}
-                          onChange={(e) => updateBlock(index, { role: e.target.value })}
-                          className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Callout Block */}
-                  {block.type === 'callout' && (
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        <select
-                          value={block.calloutType || 'insight'}
-                          onChange={(e) =>
-                            updateBlock(index, { calloutType: e.target.value as any })
-                          }
-                          className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display uppercase font-semibold"
-                        >
-                          <option value="insight">Insight</option>
-                          <option value="decision">Design Decision</option>
-                          <option value="highlight">Highlight</option>
-                          <option value="outcome">Outcome</option>
-                          <option value="warning">Warning / Constraint</option>
-                        </select>
-                        <input
-                          type="text"
-                          placeholder="Callout Title"
-                          value={block.title || ''}
-                          onChange={(e) => updateBlock(index, { title: e.target.value })}
-                          className="flex-1 px-3 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
-                        />
-                      </div>
-                      <WysiwygTextarea
-                        value={block.text || ''}
-                        onChange={(val) => updateBlock(index, { text: val })}
-                        placeholder="Callout narrative..."
-                        rows={3}
-                      />
-                    </div>
-                  )}
-
-                  {/* Columns Block */}
-                  {block.type === 'columns' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-1.5 p-3 bg-white border border-[#E8E3DD] rounded-lg">
-                        <label className="block text-[10px] font-display uppercase font-bold text-[#9B0F06]">
-                          Left Column
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Left Column Title"
-                          value={block.leftTitle || ''}
-                          onChange={(e) => updateBlock(index, { leftTitle: e.target.value })}
-                          className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold"
-                        />
-                        <WysiwygTextarea
-                          value={block.leftText || ''}
-                          onChange={(val) => updateBlock(index, { leftText: val })}
-                          placeholder="Left column description..."
-                          rows={3}
-                        />
-                      </div>
-                      <div className="space-y-1.5 p-3 bg-white border border-[#E8E3DD] rounded-lg">
-                        <label className="block text-[10px] font-display uppercase font-bold text-[#171514]">
-                          Right Column
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Right Column Title"
-                          value={block.rightTitle || ''}
-                          onChange={(e) => updateBlock(index, { rightTitle: e.target.value })}
-                          className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold"
-                        />
-                        <WysiwygTextarea
-                          value={block.rightText || ''}
-                          onChange={(val) => updateBlock(index, { rightText: val })}
-                          placeholder="Right column description..."
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Enhanced Image Block with Direct Upload & Asset Picker */}
-                  {block.type === 'image' && (
-                    <div className="space-y-3 bg-white p-4 rounded-xl border border-[#E8E3DD]">
-                      {/* Image Action Bar */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-[#E8E3DD]">
-                        <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
-                          <ImageIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
-                          <span>Image Block Asset</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {/* File input */}
-                          <label className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] rounded text-xs font-display font-semibold text-[#171514] transition-colors">
-                            <Upload className="w-3 h-3 text-[#9B0F06]" />
-                            <span>Upload Local File</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleDirectImageBlockUpload(index, e)}
-                              className="hidden"
-                            />
-                          </label>
-
-                          {/* Media Assets Selector Button */}
-                          <button
-                            type="button"
-                            onClick={() => openMediaPicker({ type: 'block', blockIndex: index })}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#9B0F06]/10 hover:bg-[#9B0F06]/20 border border-[#9B0F06]/30 text-[#9B0F06] rounded text-xs font-display font-semibold transition-colors"
-                          >
-                            <FolderOpen className="w-3 h-3" />
-                            <span>Choose from Media Assets</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* URL input fallback */}
-                      <div>
-                        <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                          Asset URL / CDN Link
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://..."
-                          value={block.url || ''}
-                          onChange={(e) => updateBlock(index, { url: e.target.value })}
-                          className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
-                        />
-                      </div>
-
-                      {/* Image Preview */}
-                      {block.url && (
-                        <div className="relative rounded-lg overflow-hidden border border-[#E8E3DD] bg-[#FAF8F5] max-h-48 flex items-center justify-center">
-                          <img
-                            src={block.url}
-                            alt={block.alt || 'Preview'}
-                            className="max-h-48 w-full object-contain"
-                          />
-                        </div>
-                      )}
-
-                      {/* Alt & Caption */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                          <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                            Alt Text (Accessibility)
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Descriptive alt text..."
-                            value={block.alt || ''}
-                            onChange={(e) => updateBlock(index, { alt: e.target.value })}
-                            className="w-full px-2 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                            Caption (Optional)
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Figure caption..."
-                            value={block.caption || ''}
-                            onChange={(e) => updateBlock(index, { caption: e.target.value })}
-                            className="w-full px-2 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Fully Configurable Table Block */}
-                  {block.type === 'table' && (
-                    <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#E8E3DD]">
-                        <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
-                          <TableIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
-                          <span>Table Block Configuration</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleAddTableColumn(index)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-[11px] font-display font-semibold transition-colors"
-                          >
-                            <Plus className="w-3 h-3 text-[#9B0F06]" />
-                            <span>Add Column</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleAddTableRow(index)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-[11px] font-display font-semibold transition-colors"
-                          >
-                            <Plus className="w-3 h-3 text-[#9B0F06]" />
-                            <span>Add Row</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Caption */}
-                      <div>
-                        <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                          Table Caption / Title
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Sensory Benchmark Matrix"
-                          value={block.caption || ''}
-                          onChange={(e) => updateBlock(index, { caption: e.target.value })}
-                          className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
-                        />
-                      </div>
-
-                      {/* Table Structure Editor */}
-                      <div className="overflow-x-auto border border-[#E8E3DD] rounded-lg">
-                        <table className="w-full text-left border-collapse text-xs">
-                          {/* Column Headers */}
-                          <thead>
-                            <tr className="bg-[#FAF8F5] border-b border-[#E8E3DD]">
-                              <th className="p-2 w-10 text-[10px] font-display uppercase text-[#6F6965] text-center">
-                                #
-                              </th>
-                              {(block.headers || ['Column 1', 'Column 2']).map((header, colIdx) => (
-                                <th key={colIdx} className="p-2">
-                                  <div className="flex items-center gap-1">
-                                    <input
-                                      type="text"
-                                      value={header}
-                                      onChange={(e) => handleUpdateTableHeader(index, colIdx, e.target.value)}
-                                      placeholder={`Column ${colIdx + 1}`}
-                                      className="w-full px-2 py-1 bg-white border border-[#E8E3DD] rounded font-display font-bold text-xs text-[#171514]"
-                                    />
-                                    {(block.headers?.length || 0) > 1 && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleRemoveTableColumn(index, colIdx)}
-                                        title="Delete column"
-                                        className="p-1 text-red-500 hover:text-red-700"
-                                      >
-                                        <X className="w-3 h-3" />
-                                      </button>
-                                    )}
-                                  </div>
-                                </th>
-                              ))}
-                              <th className="p-2 w-10"></th>
-                            </tr>
-                          </thead>
-
-                          {/* Table Body Rows */}
-                          <tbody className="divide-y divide-[#E8E3DD] bg-white">
-                            {(block.rows || [['Value 1', 'Value 2']]).map((row, rowIdx) => (
-                              <tr key={rowIdx}>
-                                <td className="p-2 text-center text-[10px] font-display text-[#6F6965]">
-                                  {rowIdx + 1}
-                                </td>
-                                {row.map((cell, colIdx) => (
-                                  <td key={colIdx} className="p-2">
-                                    <input
-                                      type="text"
-                                      value={cell}
-                                      onChange={(e) =>
-                                        handleUpdateTableCell(index, rowIdx, colIdx, e.target.value)
-                                      }
-                                      placeholder="Cell content..."
-                                      className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded font-display text-xs"
-                                    />
-                                  </td>
-                                ))}
-                                <td className="p-2 text-center">
-                                  {(block.rows?.length || 0) > 1 && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveTableRow(index, rowIdx)}
-                                      title="Delete row"
-                                      className="p-1 text-red-500 hover:text-red-700"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Fully Configurable User Flow Block */}
-                  {block.type === 'userFlow' && (
-                    <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
-                      <div className="flex items-center justify-between pb-2 border-b border-[#E8E3DD]">
-                        <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
-                          <GitFork className="w-3.5 h-3.5 text-[#9B0F06]" />
-                          <span>User Flow Journey Steps</span>
-                        </div>
-
+                      <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => handleAddFlowStep(index)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-xs font-display font-semibold transition-colors"
+                          onClick={() => moveBlock(index, 'up')}
+                          disabled={index === 0}
+                          title="Move Up"
+                          className="p-1 hover:text-[#171514] disabled:opacity-30 transition-colors"
                         >
-                          <Plus className="w-3 h-3 text-[#9B0F06]" />
-                          <span>Add Step</span>
+                          <MoveUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveBlock(index, 'down')}
+                          disabled={index === blocks.length - 1}
+                          title="Move Down"
+                          className="p-1 hover:text-[#171514] disabled:opacity-30 transition-colors"
+                        >
+                          <MoveDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => duplicateBlock(index)}
+                          title="Duplicate Block"
+                          className="p-1 text-[#6F6965] hover:text-[#9B0F06] transition-colors"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeBlock(index)}
+                          title="Delete Block"
+                          className="p-1 text-red-500 hover:text-red-700 ml-1 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
+                    </div>
 
-                      {/* Steps List */}
-                      <div className="space-y-3">
-                        {(block.flowSteps || []).map((step, sIdx) => (
-                          <div
-                            key={sIdx}
-                            className="p-3 bg-[#FAF8F5] rounded-lg border border-[#E8E3DD] space-y-2 relative"
+                    {/* Heading Block */}
+                    {block.type === 'heading' && (
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <select
+                            value={block.level || 2}
+                            onChange={(e) =>
+                              updateBlock(index, { level: Number(e.target.value) as 1 | 2 | 3 })
+                            }
+                            className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
                           >
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2 flex-1">
-                                <input
-                                  type="text"
-                                  placeholder="01"
-                                  value={step.step}
-                                  onChange={(e) =>
-                                    handleUpdateFlowStep(index, sIdx, 'step', e.target.value)
-                                  }
-                                  className="w-14 px-2 py-1 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#9B0F06] text-center"
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Step Title (e.g. Discovery)"
-                                  value={step.title}
-                                  onChange={(e) =>
-                                    handleUpdateFlowStep(index, sIdx, 'title', e.target.value)
-                                  }
-                                  className="flex-1 px-2.5 py-1 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
-                                />
-                              </div>
-
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveFlowStep(index, sIdx)}
-                                title="Delete Step"
-                                className="p-1 text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-
-                            <textarea
-                              rows={2}
-                              placeholder="Step description & user action..."
-                              value={step.description}
-                              onChange={(e) =>
-                                handleUpdateFlowStep(index, sIdx, 'description', e.target.value)
-                              }
-                              className="w-full px-2.5 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
-                            />
-                          </div>
-                        ))}
-
-                        {(!block.flowSteps || block.flowSteps.length === 0) && (
-                          <p className="text-xs font-display text-[#6F6965] text-center py-4">
-                            No flow steps yet. Click "Add Step" above.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Code Snippet Block */}
-                  {block.type === 'code' && (
-                    <div className="space-y-2 bg-white p-4 rounded-xl border border-[#E8E3DD]">
-                      <div className="flex items-center justify-between">
-                        <span className="font-display font-semibold text-xs text-[#171514]">
-                          Code Block Configuration
-                        </span>
-                        <select
-                          value={block.language || 'typescript'}
-                          onChange={(e) => updateBlock(index, { language: e.target.value })}
-                          className="px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
-                        >
-                          <option value="typescript">TypeScript</option>
-                          <option value="javascript">JavaScript</option>
-                          <option value="css">CSS</option>
-                          <option value="html">HTML</option>
-                          <option value="json">JSON</option>
-                          <option value="bash">Bash / Shell</option>
-                        </select>
-                      </div>
-                      <textarea
-                        rows={4}
-                        value={block.code || ''}
-                        onChange={(e) => updateBlock(index, { code: e.target.value })}
-                        placeholder="// Enter code snippet here..."
-                        className="w-full px-3 py-2 bg-[#171514] text-white rounded text-xs font-mono"
-                      />
-                    </div>
-                  )}
-
-                  {/* Link / CTA Block */}
-                  {block.type === 'link' && (
-                    <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
-                      <div className="flex items-center justify-between pb-2 border-b border-[#E8E3DD]">
-                        <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
-                          <LinkIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
-                          <span>Link & Action Card Configuration</span>
+                            <option value="1">H1 (Major Section)</option>
+                            <option value="2">H2 (Subsection)</option>
+                            <option value="3">H3 (Minor Subsection)</option>
+                          </select>
+                          <input
+                            type="text"
+                            value={block.text || ''}
+                            onChange={(e) => updateBlock(index, { text: e.target.value })}
+                            placeholder="Section heading title..."
+                            className="flex-1 px-3 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                          />
                         </div>
-                        <span className="text-[10px] font-display uppercase tracking-wider text-[#6F6965] font-bold">
-                          Interactive Block
-                        </span>
                       </div>
+                    )}
 
+                    {/* Paragraph Block */}
+                    {block.type === 'paragraph' && (
+                      <WysiwygTextarea
+                        value={block.text || ''}
+                        onChange={(val) => updateBlock(index, { text: val })}
+                        placeholder="Write your case study narrative here... Use the Link and formatting tools above for rich inline formatting."
+                        rows={4}
+                      />
+                    )}
+
+                    {/* Quote Block */}
+                    {block.type === 'quote' && (
+                      <div className="space-y-2">
+                        <WysiwygTextarea
+                          value={block.text || ''}
+                          onChange={(val) => updateBlock(index, { text: val })}
+                          placeholder="Quote text..."
+                          rows={2}
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            placeholder="Author Name"
+                            value={block.author || ''}
+                            onChange={(e) => updateBlock(index, { author: e.target.value })}
+                            className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Author Role / Title"
+                            value={block.role || ''}
+                            onChange={(e) => updateBlock(index, { role: e.target.value })}
+                            className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Callout Block */}
+                    {block.type === 'callout' && (
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <select
+                            value={block.calloutType || 'insight'}
+                            onChange={(e) =>
+                              updateBlock(index, { calloutType: e.target.value as any })
+                            }
+                            className="px-2 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display uppercase font-semibold"
+                          >
+                            <option value="insight">Insight</option>
+                            <option value="decision">Design Decision</option>
+                            <option value="highlight">Highlight</option>
+                            <option value="outcome">Outcome</option>
+                            <option value="warning">Warning / Constraint</option>
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Callout Title"
+                            value={block.title || ''}
+                            onChange={(e) => updateBlock(index, { title: e.target.value })}
+                            className="flex-1 px-3 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                          />
+                        </div>
+                        <WysiwygTextarea
+                          value={block.text || ''}
+                          onChange={(val) => updateBlock(index, { text: val })}
+                          placeholder="Callout narrative..."
+                          rows={3}
+                        />
+                      </div>
+                    )}
+
+                    {/* Columns Block */}
+                    {block.type === 'columns' && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Link Text */}
-                        <div>
-                          <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                            Link / Button Title
+                        <div className="space-y-1.5 p-3 bg-white border border-[#E8E3DD] rounded-lg">
+                          <label className="block text-[10px] font-display uppercase font-bold text-[#9B0F06]">
+                            Left Column
                           </label>
                           <input
                             type="text"
-                            placeholder="e.g. View Live Figma Prototype"
-                            value={block.linkText || ''}
-                            onChange={(e) => updateBlock(index, { linkText: e.target.value })}
-                            className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                            placeholder="Left Column Title"
+                            value={block.leftTitle || ''}
+                            onChange={(e) => updateBlock(index, { leftTitle: e.target.value })}
+                            className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold"
+                          />
+                          <WysiwygTextarea
+                            value={block.leftText || ''}
+                            onChange={(val) => updateBlock(index, { leftText: val })}
+                            placeholder="Left column description..."
+                            rows={3}
                           />
                         </div>
+                        <div className="space-y-1.5 p-3 bg-white border border-[#E8E3DD] rounded-lg">
+                          <label className="block text-[10px] font-display uppercase font-bold text-[#171514]">
+                            Right Column
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Right Column Title"
+                            value={block.rightTitle || ''}
+                            onChange={(e) => updateBlock(index, { rightTitle: e.target.value })}
+                            className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold"
+                          />
+                          <WysiwygTextarea
+                            value={block.rightText || ''}
+                            onChange={(val) => updateBlock(index, { rightText: val })}
+                            placeholder="Right column description..."
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    )}
 
-                        {/* Link URL */}
+                    {/* Enhanced Image Block with Direct Upload & Asset Picker */}
+                    {block.type === 'image' && (
+                      <div className="space-y-3 bg-white p-4 rounded-xl border border-[#E8E3DD]">
+                        {/* Image Action Bar */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-[#E8E3DD]">
+                          <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
+                            <ImageIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
+                            <span>Image Block Asset</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {/* File input */}
+                            <label className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] rounded text-xs font-display font-semibold text-[#171514] transition-colors">
+                              <Upload className="w-3 h-3 text-[#9B0F06]" />
+                              <span>Upload Local File</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleDirectImageBlockUpload(index, e)}
+                                className="hidden"
+                              />
+                            </label>
+
+                            {/* Media Assets Selector Button */}
+                            <button
+                              type="button"
+                              onClick={() => openMediaPicker({ type: 'block', blockIndex: index })}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#9B0F06]/10 hover:bg-[#9B0F06]/20 border border-[#9B0F06]/30 text-[#9B0F06] rounded text-xs font-display font-semibold transition-colors"
+                            >
+                              <FolderOpen className="w-3 h-3" />
+                              <span>Choose from Media Assets</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* URL input fallback */}
                         <div>
                           <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                            Destination URL
+                            Asset URL / CDN Link
                           </label>
                           <input
                             type="text"
                             placeholder="https://..."
-                            value={block.linkUrl || ''}
-                            onChange={(e) => updateBlock(index, { linkUrl: e.target.value })}
+                            value={block.url || ''}
+                            onChange={(e) => updateBlock(index, { url: e.target.value })}
                             className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
                           />
                         </div>
-                      </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Presentation Style */}
+                        {/* Image Preview */}
+                        {block.url && (
+                          <div className="relative rounded-lg overflow-hidden border border-[#E8E3DD] bg-[#FAF8F5] max-h-48 flex items-center justify-center">
+                            <img
+                              src={block.url}
+                              alt={block.alt || 'Preview'}
+                              className="max-h-48 w-full object-contain"
+                            />
+                          </div>
+                        )}
+
+                        {/* Alt & Caption */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                              Alt Text (Accessibility)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Descriptive alt text..."
+                              value={block.alt || ''}
+                              onChange={(e) => updateBlock(index, { alt: e.target.value })}
+                              className="w-full px-2 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                              Caption (Optional)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Figure caption..."
+                              value={block.caption || ''}
+                              onChange={(e) => updateBlock(index, { caption: e.target.value })}
+                              className="w-full px-2 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Fully Configurable Table Block */}
+                    {block.type === 'table' && (
+                      <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#E8E3DD]">
+                          <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
+                            <TableIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
+                            <span>Table Block Configuration</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleAddTableColumn(index)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-[11px] font-display font-semibold transition-colors"
+                            >
+                              <Plus className="w-3 h-3 text-[#9B0F06]" />
+                              <span>Add Column</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleAddTableRow(index)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-[11px] font-display font-semibold transition-colors"
+                            >
+                              <Plus className="w-3 h-3 text-[#9B0F06]" />
+                              <span>Add Row</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Caption */}
                         <div>
                           <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                            Visual Style
+                            Table Caption / Title
                           </label>
-                          <select
-                            value={block.linkStyle || 'card'}
-                            onChange={(e) =>
-                              updateBlock(index, {
-                                linkStyle: e.target.value as 'card' | 'primary' | 'secondary' | 'ghost',
-                              })
-                            }
-                            className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
+                          <input
+                            type="text"
+                            placeholder="e.g. Sensory Benchmark Matrix"
+                            value={block.caption || ''}
+                            onChange={(e) => updateBlock(index, { caption: e.target.value })}
+                            className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                          />
+                        </div>
+
+                        {/* Table Structure Editor */}
+                        <div className="overflow-x-auto border border-[#E8E3DD] rounded-lg">
+                          <table className="w-full text-left border-collapse text-xs">
+                            {/* Column Headers */}
+                            <thead>
+                              <tr className="bg-[#FAF8F5] border-b border-[#E8E3DD]">
+                                <th className="p-2 w-10 text-[10px] font-display uppercase text-[#6F6965] text-center">
+                                  #
+                                </th>
+                                {(block.headers || ['Column 1', 'Column 2']).map((header, colIdx) => (
+                                  <th key={colIdx} className="p-2">
+                                    <div className="flex items-center gap-1">
+                                      <input
+                                        type="text"
+                                        value={header}
+                                        onChange={(e) => handleUpdateTableHeader(index, colIdx, e.target.value)}
+                                        placeholder={`Column ${colIdx + 1}`}
+                                        className="w-full px-2 py-1 bg-white border border-[#E8E3DD] rounded font-display font-bold text-xs text-[#171514]"
+                                      />
+                                      {(block.headers?.length || 0) > 1 && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleRemoveTableColumn(index, colIdx)}
+                                          title="Delete column"
+                                          className="p-1 text-red-500 hover:text-red-700"
+                                        >
+                                          <X className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </th>
+                                ))}
+                                <th className="p-2 w-10"></th>
+                              </tr>
+                            </thead>
+
+                            {/* Table Body Rows */}
+                            <tbody className="divide-y divide-[#E8E3DD] bg-white">
+                              {(block.rows || [['Value 1', 'Value 2']]).map((row, rowIdx) => (
+                                <tr key={rowIdx}>
+                                  <td className="p-2 text-center text-[10px] font-display text-[#6F6965]">
+                                    {rowIdx + 1}
+                                  </td>
+                                  {row.map((cell, colIdx) => (
+                                    <td key={colIdx} className="p-2">
+                                      <input
+                                        type="text"
+                                        value={cell}
+                                        onChange={(e) =>
+                                          handleUpdateTableCell(index, rowIdx, colIdx, e.target.value)
+                                        }
+                                        placeholder="Cell content..."
+                                        className="w-full px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded font-display text-xs"
+                                      />
+                                    </td>
+                                  ))}
+                                  <td className="p-2 text-center">
+                                    {(block.rows?.length || 0) > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveTableRow(index, rowIdx)}
+                                        title="Delete row"
+                                        className="p-1 text-red-500 hover:text-red-700"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Fully Configurable User Flow Block */}
+                    {block.type === 'userFlow' && (
+                      <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#E8E3DD]">
+                          <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
+                            <GitFork className="w-3.5 h-3.5 text-[#9B0F06]" />
+                            <span>User Flow Journey Steps</span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleAddFlowStep(index)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FAF8F5] hover:bg-[#F7F4F0] border border-[#E8E3DD] text-[#171514] rounded text-xs font-display font-semibold transition-colors"
                           >
-                            <option value="card">Rich Resource Card (Domain, Icon & Arrow)</option>
-                            <option value="primary">Primary Brand Button (High-Contrast Red)</option>
-                            <option value="secondary">Secondary Outline Button (Warm Cream)</option>
-                            <option value="ghost">Ghost Inline Link (Underline & Arrow)</option>
+                            <Plus className="w-3 h-3 text-[#9B0F06]" />
+                            <span>Add Step</span>
+                          </button>
+                        </div>
+
+                        {/* Steps List */}
+                        <div className="space-y-3">
+                          {(block.flowSteps || []).map((step, sIdx) => (
+                            <div
+                              key={sIdx}
+                              className="p-3 bg-[#FAF8F5] rounded-lg border border-[#E8E3DD] space-y-2 relative"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 flex-1">
+                                  <input
+                                    type="text"
+                                    placeholder="01"
+                                    value={step.step}
+                                    onChange={(e) =>
+                                      handleUpdateFlowStep(index, sIdx, 'step', e.target.value)
+                                    }
+                                    className="w-14 px-2 py-1 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#9B0F06] text-center"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Step Title (e.g. Discovery)"
+                                    value={step.title}
+                                    onChange={(e) =>
+                                      handleUpdateFlowStep(index, sIdx, 'title', e.target.value)
+                                    }
+                                    className="flex-1 px-2.5 py-1 bg-white border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                                  />
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveFlowStep(index, sIdx)}
+                                  title="Delete Step"
+                                  className="p-1 text-red-500 hover:text-red-700"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <textarea
+                                rows={2}
+                                placeholder="Step description & user action..."
+                                value={step.description}
+                                onChange={(e) =>
+                                  handleUpdateFlowStep(index, sIdx, 'description', e.target.value)
+                                }
+                                className="w-full px-2.5 py-1.5 bg-white border border-[#E8E3DD] rounded text-xs font-display"
+                              />
+                            </div>
+                          ))}
+
+                          {(!block.flowSteps || block.flowSteps.length === 0) && (
+                            <p className="text-xs font-display text-[#6F6965] text-center py-4">
+                              No flow steps yet. Click "Add Step" above.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Code Snippet Block */}
+                    {block.type === 'code' && (
+                      <div className="space-y-2 bg-white p-4 rounded-xl border border-[#E8E3DD]">
+                        <div className="flex items-center justify-between">
+                          <span className="font-display font-semibold text-xs text-[#171514]">
+                            Code Block Configuration
+                          </span>
+                          <select
+                            value={block.language || 'typescript'}
+                            onChange={(e) => updateBlock(index, { language: e.target.value })}
+                            className="px-2 py-1 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display"
+                          >
+                            <option value="typescript">TypeScript</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="css">CSS</option>
+                            <option value="html">HTML</option>
+                            <option value="json">JSON</option>
+                            <option value="bash">Bash / Shell</option>
                           </select>
                         </div>
-
-                        {/* Target New Tab */}
-                        <div className="flex items-center gap-2 pt-4 sm:pt-5">
-                          <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-display text-[#171514]">
-                            <input
-                              type="checkbox"
-                              checked={block.linkNewTab !== false}
-                              onChange={(e) => updateBlock(index, { linkNewTab: e.target.checked })}
-                              className="rounded border-[#E8E3DD] text-[#9B0F06] focus:ring-[#9B0F06]"
-                            />
-                            <span>Open in new tab (`target="_blank"`)</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Link Description / Subtitle */}
-                      <div>
-                        <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
-                          Subtitle / Description (Optional)
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Includes full design system token architecture and responsive specs."
-                          value={block.linkDescription || ''}
-                          onChange={(e) => updateBlock(index, { linkDescription: e.target.value })}
-                          className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
+                        <textarea
+                          rows={4}
+                          value={block.code || ''}
+                          onChange={(e) => updateBlock(index, { code: e.target.value })}
+                          placeholder="// Enter code snippet here..."
+                          className="w-full px-3 py-2 bg-[#171514] text-white rounded text-xs font-mono"
                         />
                       </div>
+                    )}
 
-                      {/* Live In-Editor Preview */}
-                      <div className="pt-2 border-t border-[#E8E3DD] space-y-1.5">
-                        <span className="text-[10px] font-display uppercase font-bold text-[#6F6965]">
-                          Public Render Preview:
-                        </span>
-                        <div className="p-3 bg-[#FAF8F5] rounded-lg border border-[#E8E3DD]">
-                          {(!block.linkStyle || block.linkStyle === 'card') && (
-                            <div className="p-4 bg-white border border-[#E8E3DD] rounded-xl flex items-center justify-between gap-3 shadow-2xs">
-                              <div className="space-y-0.5 min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="p-1 rounded bg-[#9B0F06]/10 text-[#9B0F06]">
-                                    <LinkIcon className="w-3 h-3" />
-                                  </span>
-                                  <span className="font-display font-bold text-xs text-[#171514] truncate">
-                                    {block.linkText || 'Open Resource'}
-                                  </span>
+                    {/* Link / CTA Block */}
+                    {block.type === 'link' && (
+                      <div className="space-y-4 bg-white p-4 rounded-xl border border-[#E8E3DD]">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#E8E3DD]">
+                          <div className="font-display font-semibold text-xs text-[#171514] flex items-center gap-1.5">
+                            <LinkIcon className="w-3.5 h-3.5 text-[#9B0F06]" />
+                            <span>Link & Action Card Configuration</span>
+                          </div>
+                          <span className="text-[10px] font-display uppercase tracking-wider text-[#6F6965] font-bold">
+                            Interactive Block
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Link Text */}
+                          <div>
+                            <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                              Link / Button Title
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. View Live Figma Prototype"
+                              value={block.linkText || ''}
+                              onChange={(e) => updateBlock(index, { linkText: e.target.value })}
+                              className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display font-bold text-[#171514]"
+                            />
+                          </div>
+
+                          {/* Link URL */}
+                          <div>
+                            <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                              Destination URL
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="https://..."
+                              value={block.linkUrl || ''}
+                              onChange={(e) => updateBlock(index, { linkUrl: e.target.value })}
+                              className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Presentation Style */}
+                          <div>
+                            <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                              Visual Style
+                            </label>
+                            <select
+                              value={block.linkStyle || 'card'}
+                              onChange={(e) =>
+                                updateBlock(index, {
+                                  linkStyle: e.target.value as 'card' | 'primary' | 'secondary' | 'ghost',
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
+                            >
+                              <option value="card">Rich Resource Card (Domain, Icon & Arrow)</option>
+                              <option value="primary">Primary Brand Button (High-Contrast Red)</option>
+                              <option value="secondary">Secondary Outline Button (Warm Cream)</option>
+                              <option value="ghost">Ghost Inline Link (Underline & Arrow)</option>
+                            </select>
+                          </div>
+
+                          {/* Target New Tab */}
+                          <div className="flex items-center gap-2 pt-4 sm:pt-5">
+                            <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-display text-[#171514]">
+                              <input
+                                type="checkbox"
+                                checked={block.linkNewTab !== false}
+                                onChange={(e) => updateBlock(index, { linkNewTab: e.target.checked })}
+                                className="rounded border-[#E8E3DD] text-[#9B0F06] focus:ring-[#9B0F06]"
+                              />
+                              <span>Open in new tab (`target="_blank"`)</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Link Description / Subtitle */}
+                        <div>
+                          <label className="block text-[10px] font-display uppercase font-semibold text-[#6F6965] mb-1">
+                            Subtitle / Description (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Includes full design system token architecture and responsive specs."
+                            value={block.linkDescription || ''}
+                            onChange={(e) => updateBlock(index, { linkDescription: e.target.value })}
+                            className="w-full px-2.5 py-1.5 bg-[#FAF8F5] border border-[#E8E3DD] rounded text-xs font-display text-[#171514]"
+                          />
+                        </div>
+
+                        {/* Live In-Editor Preview */}
+                        <div className="pt-2 border-t border-[#E8E3DD] space-y-1.5">
+                          <span className="text-[10px] font-display uppercase font-bold text-[#6F6965]">
+                            Public Render Preview:
+                          </span>
+                          <div className="p-3 bg-[#FAF8F5] rounded-lg border border-[#E8E3DD]">
+                            {(!block.linkStyle || block.linkStyle === 'card') && (
+                              <div className="p-4 bg-white border border-[#E8E3DD] rounded-xl flex items-center justify-between gap-3 shadow-2xs">
+                                <div className="space-y-0.5 min-w-0">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="p-1 rounded bg-[#9B0F06]/10 text-[#9B0F06]">
+                                      <LinkIcon className="w-3 h-3" />
+                                    </span>
+                                    <span className="font-display font-bold text-xs text-[#171514] truncate">
+                                      {block.linkText || 'Open Resource'}
+                                    </span>
+                                  </div>
+                                  {block.linkDescription && (
+                                    <p className="text-[11px] text-[#6F6965] font-light truncate">
+                                      {block.linkDescription}
+                                    </p>
+                                  )}
+                                  {block.linkUrl && (
+                                    <span className="text-[10px] font-mono text-[#9B0F06]">
+                                      {block.linkUrl}
+                                    </span>
+                                  )}
                                 </div>
-                                {block.linkDescription && (
-                                  <p className="text-[11px] text-[#6F6965] font-light truncate">
-                                    {block.linkDescription}
-                                  </p>
-                                )}
-                                {block.linkUrl && (
-                                  <span className="text-[10px] font-mono text-[#9B0F06]">
-                                    {block.linkUrl}
-                                  </span>
-                                )}
+                                <div className="w-7 h-7 rounded-full bg-[#FAF8F5] border border-[#E8E3DD] flex items-center justify-center text-[#171514]">
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </div>
                               </div>
-                              <div className="w-7 h-7 rounded-full bg-[#FAF8F5] border border-[#E8E3DD] flex items-center justify-center text-[#171514]">
+                            )}
+
+                            {block.linkStyle === 'primary' && (
+                              <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#9B0F06] text-white rounded-lg text-xs font-display font-semibold uppercase tracking-wider">
+                                <span>{block.linkText || 'Open Link'}</span>
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {block.linkStyle === 'primary' && (
-                            <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#9B0F06] text-white rounded-lg text-xs font-display font-semibold uppercase tracking-wider">
-                              <span>{block.linkText || 'Open Link'}</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </div>
-                          )}
+                            {block.linkStyle === 'secondary' && (
+                              <div className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#E8E3DD] text-[#171514] rounded-lg text-xs font-display font-semibold uppercase tracking-wider">
+                                <ExternalLink className="w-3.5 h-3.5 text-[#9B0F06]" />
+                                <span>{block.linkText || 'Open Link'}</span>
+                              </div>
+                            )}
 
-                          {block.linkStyle === 'secondary' && (
-                            <div className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#E8E3DD] text-[#171514] rounded-lg text-xs font-display font-semibold uppercase tracking-wider">
-                              <ExternalLink className="w-3.5 h-3.5 text-[#9B0F06]" />
-                              <span>{block.linkText || 'Open Link'}</span>
-                            </div>
-                          )}
-
-                          {block.linkStyle === 'ghost' && (
-                            <div className="inline-flex items-center gap-1 text-xs font-display font-semibold text-[#9B0F06] underline decoration-[#9B0F06]/40">
-                              <span>{block.linkText || 'Open Link'}</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </div>
-                          )}
+                            {block.linkStyle === 'ghost' && (
+                              <div className="inline-flex items-center gap-1 text-xs font-display font-semibold text-[#9B0F06] underline decoration-[#9B0F06]/40">
+                                <span>{block.linkText || 'Open Link'}</span>
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Divider Block */}
-                  {block.type === 'divider' && (
-                    <div className="p-3 bg-white border border-[#E8E3DD] rounded text-center">
-                      <hr className="border-t border-[#E8E3DD] my-2" />
-                      <span className="text-[10px] font-display uppercase tracking-widest text-[#6F6965]">
-                        Horizontal Section Divider Line
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    {/* Divider Block */}
+                    {block.type === 'divider' && (
+                      <div className="p-3 bg-white border border-[#E8E3DD] rounded text-center">
+                        <hr className="border-t border-[#E8E3DD] my-2" />
+                        <span className="text-[10px] font-display uppercase tracking-widest text-[#6F6965]">
+                          Horizontal Section Divider Line
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
